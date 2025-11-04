@@ -1,6 +1,8 @@
-const Main = async () => {
+const CampPage = async () => {
   return (
-    <div>Main</div>
+    <div className="">
+      CampPage
+    </div>
   )
 }
-export default Main
+export default CampPage
