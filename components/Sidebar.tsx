@@ -54,7 +54,7 @@ const Sidebar = () => {
                     menuItems.map((item, index) => {
                         const isActive = pathname === `/${item.detail}` || (item.detail === '' && pathname === '/');
                         return (
-                        <Link href={`/${item.detail}`} key={index} className={`${!open && 'justify-center'} px-3 my-3 h-20 ${isActive ? 'bg-blue-950' : 'hover:bg-blue-950'} rounded-md duration-300 cursor-pointer flex items-center gap-4 group`}>
+                        <Link href={`/${item.detail}`} key={index} className={`${!open && 'justify-center'} px-3 my-3 h-20 ${isActive ? 'bg-blue-900' : 'hover:bg-blue-950'} rounded-md duration-300 cursor-pointer flex items-center gap-4 group`}>
                             <div className={`${!open && 'absolute'}`}>{item.icon}</div>
                             <p className={`${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>{item.label}</p>
                             {!open && (
