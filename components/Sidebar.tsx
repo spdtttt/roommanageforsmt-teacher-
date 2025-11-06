@@ -41,7 +41,7 @@ const Sidebar = () => {
                 onClick={() => setOpen(false)}
             />
         )}
-        <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md h-screen p-3 flex flex-col duration-500 ${open ? 'w-60 md:w-75' : 'w-20 md:w-30'} bg-blue-950 text-white`} >
+        <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md h-screen p-3 flex flex-col duration-500 ${open ? 'w-60 md:w-75' : 'w-20 md:w-30'} bg-blue-900 text-white`} >
             {/* Header */}
             <div className={`px-3 py-2 h-25 flex items-center ${open ? 'justify-between' : 'justify-center'}`}>
                 <Image src={logo} alt="Logo" className={`${open ? 'w-10' : 'w-0'} rounded-md`} />
@@ -54,7 +54,7 @@ const Sidebar = () => {
                     menuItems.map((item, index) => {
                         const isActive = pathname === `/${item.detail}` || (item.detail === '' && pathname === '/');
                         return (
-                        <Link href={`/${item.detail}`} key={index} className={`${!open && 'justify-center'} px-3 my-3 h-20 ${isActive ? 'bg-blue-900' : 'hover:bg-blue-950'} rounded-md duration-300 cursor-pointer flex items-center gap-4 group`}>
+                        <Link href={`/${item.detail}`} key={index} className={`${!open && 'justify-center'} px-3 my-3 h-20 ${isActive ? 'bg-blue-950' : 'hover:bg-blue-950'} rounded-md duration-300 cursor-pointer flex items-center gap-4 group`}>
                             <div className={`${!open && 'absolute'}`}>{item.icon}</div>
                             <p className={`${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>{item.label}</p>
                             {!open && (
