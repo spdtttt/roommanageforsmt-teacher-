@@ -1,6 +1,8 @@
 import StudentList from "@/components/StudentList"
 import { prisma } from "@/prisma";
 
+export const revalidate = 0;
+
 const StudentPage = async () => {
   const dbStudents = await prisma.student.findMany();
   const Students = dbStudents.map(s => ({

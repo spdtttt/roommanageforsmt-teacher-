@@ -1,5 +1,6 @@
 import {prisma} from "@/prisma";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
     const students = await prisma.student.findMany();
@@ -23,6 +24,8 @@ export async function POST(req: Request) {
                 class: classroom
             }
         })
+
+        revalidatePath('/students')
 
         return NextResponse.json({ message: 'Student created successfully' });
     } catch(err) {

@@ -1,6 +1,7 @@
-'use server'
 import CampList from "@/components/CampList"
 import { prisma } from "@/prisma";
+
+export const revalidate = 0;
 
 const CampPage = async () => {
   const dbCamps = await prisma.camp.findMany();

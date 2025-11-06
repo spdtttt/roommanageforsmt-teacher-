@@ -4,6 +4,8 @@ import { BeatLoader } from "react-spinners";
 import { prisma } from "@/prisma";
 import { notFound } from "next/navigation";
 
+export const revalidate = 0;
+
 async function RoomData({
     params,
 }: {

@@ -1,5 +1,6 @@
 import { prisma } from "@/prisma"
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
     const camps = await prisma.camp.findMany();
@@ -23,6 +24,9 @@ export async function POST(req: Request) {
                 max: max
             }
         })
+
+        revalidatePath('/')
+        revalidatePath('/rooms')
 
         return NextResponse.json({ message: 'Camp created successfully', newCamp });
     } catch(err) {

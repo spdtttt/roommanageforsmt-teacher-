@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { BeatLoader } from "react-spinners";
 import { prisma } from "@/prisma";
 
+export const revalidate = 0;
+
 async function CampData() {
   const dbCamps = await prisma.camp.findMany();
   const camps = dbCamps.map(c => ({
