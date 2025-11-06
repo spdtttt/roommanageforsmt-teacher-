@@ -1,7 +1,9 @@
 import StudentList from "@/components/StudentList"
 
+const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 const StudentPage = async () => {
-  const response = await fetch(`${process.env.NEXT_URL}/api/students`);
+  const response = await fetch(`${URL}/api/students`);
   const Students = await response.json();
 
   return (

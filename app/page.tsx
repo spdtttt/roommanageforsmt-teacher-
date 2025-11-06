@@ -1,9 +1,10 @@
 'use server'
 import CampList from "@/components/CampList"
-import { prisma } from "@/prisma";
+
+const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 const CampPage = async () => {
-  const response = await fetch(`${process.env.NEXT_URL}/api/camps`, {
+  const response = await fetch(`${URL}/api/camps`, {
     cache: 'no-store'
   });
   const Camps = await response.json();

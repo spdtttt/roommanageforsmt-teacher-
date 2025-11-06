@@ -2,8 +2,10 @@ import CampShow from "@/components/CampShow";
 import { Suspense } from "react";
 import { BeatLoader } from "react-spinners";
 
+const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 async function CampData() {
-  const response = await fetch(`${process.env.NEXT_URL}/api/camps`, {
+  const response = await fetch(`${URL}/api/camps`, {
     cache: 'no-store'
   });
   const camps = await response.json();
