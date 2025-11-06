@@ -41,7 +41,7 @@ const Sidebar = () => {
                 onClick={() => setOpen(false)}
             />
         )}
-        <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md h-screen p-3 flex flex-col duration-500 ${open ? 'w-75' : 'w-30'} bg-blue-950 text-white`} >
+        <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md h-screen p-3 flex flex-col duration-500 ${open ? 'w-60 md:w-75' : 'w-20 md:w-30'} bg-blue-950 text-white`} >
             {/* Header */}
             <div className={`px-3 py-2 h-25 flex items-center ${open ? 'justify-between' : 'justify-center'}`}>
                 <Image src={logo} alt="Logo" className={`${open ? 'w-10' : 'w-0'} rounded-md`} />
@@ -73,8 +73,8 @@ const Sidebar = () => {
             </ul>
 
             {/* Footer */}
-            <div className={`flex mb-2 items-center gap-4 ${open ? '' : 'justify-center'}`}>
-                <div><FaUserCircle size={40} /></div>
+            <div className={`flex mb-2 items-center gap-4 justify-center`}>
+                <div className={`${!open && 'absolute'}`}><FaUserCircle size={40} /></div>
                 <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
                     <p>โรงเรียนเมืองสุราษฎร์ธานี</p>
                     <p className="text-xs">warunya@mst.ac.th</p>

@@ -13,12 +13,18 @@ const StudentPage = async () => {
 
   return (
     <div className="mt-10">
-      <div>
-        <h1 className="text-2xl md:text-4xl" style={{
-          fontFamily: 'Mitr, sans-serif',
-          fontWeight: '500'
-        }}>รายชื่อนักเรียนทั้งหมด</h1>
-      </div>
+      <div className="mb-3" style={{
+        fontFamily: 'Mitr, sans-serif',
+        fontWeight: '500',
+        fontSize: '40px'
+      }}>รายชื่อนักเรียนทั้งหมด</div>
+
+      <div style={{
+        width: '85%',
+        height: '1.5px',
+        backgroundColor: '#c7c7c7',
+        marginBottom: '30px'
+      }}></div>
       
       <StudentList Students={Students} />
     </div>

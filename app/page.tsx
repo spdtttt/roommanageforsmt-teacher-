@@ -14,12 +14,18 @@ const CampPage = async () => {
 
   return (
     <div className="mt-10">
-      <div>
-        <h1 className="text-2xl md:text-4xl" style={{
-          fontFamily: 'Mitr, sans-serif',
-          fontWeight: '500'
-        }}>รายการค่าย & กิจกรรมทั้งหมด</h1>
-      </div>
+      <div className="mb-3" style={{
+        fontFamily: 'Mitr, sans-serif',
+        fontWeight: '500',
+        fontSize: '40px'
+      }}>รายการค่าย & กิจกรรมทั้งหมด</div>
+
+      <div style={{
+        width: '85%',
+        height: '1.5px',
+        backgroundColor: '#c7c7c7',
+        marginBottom: '30px'
+      }}></div>
 
       <CampList Camps={Camps} />
     </div>
