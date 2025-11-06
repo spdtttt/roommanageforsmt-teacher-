@@ -1,16 +1,17 @@
 import CampShow from "@/components/CampShow";
 import { Suspense } from "react";
 import { BeatLoader } from "react-spinners";
-
-const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+import { prisma } from "@/prisma";
 
 async function CampData() {
-  const response = await fetch(`${URL}/api/camps`, {
-    cache: 'no-store'
-  });
-  const camps = await response.json();
-  console.log('Fetch Camp: ', camps);
-
+  const dbCamps = await prisma.camp.findMany();
+  const camps = dbCamps.map(c => ({
+    id: c.id,
+    title: c.title ?? '',
+    class: c.class ?? 0,
+    date: (c.date ?? new Date()).toISOString(),
+    max: c.max ?? 0,
+  }));
   return <CampShow camps={camps} />
 }
 

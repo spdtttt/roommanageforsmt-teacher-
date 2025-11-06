@@ -1,10 +1,15 @@
 import StudentList from "@/components/StudentList"
-
-const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+import { prisma } from "@/prisma";
 
 const StudentPage = async () => {
-  const response = await fetch(`${URL}/api/students`);
-  const Students = await response.json();
+  const dbStudents = await prisma.student.findMany();
+  const Students = dbStudents.map(s => ({
+    id: s.id,
+    student_id: s.student_id,
+    name: s.name ?? '',
+    gender: s.gender ?? '',
+    class: s.class ?? 0,
+  }));
 
   return (
     <div className="mt-10">

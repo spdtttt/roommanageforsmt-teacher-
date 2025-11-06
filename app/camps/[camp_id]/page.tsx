@@ -1,8 +1,8 @@
 import RoomTable from "@/components/RoomTable";
 import { Suspense } from "react";
 import { BeatLoader } from "react-spinners";
-
-const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+import { prisma } from "@/prisma";
+import { notFound } from "next/navigation";
 
 async function RoomData({
     params,
@@ -10,13 +10,12 @@ async function RoomData({
     params: { camp_id: string };
 }) {
     const camp_id = parseInt(params.camp_id, 10)
-    console.log("Camp ID: ", camp_id)
-    const response = await fetch(`${URL}/api/room/${camp_id}`, {
-        cache: 'no-store'
-    });
-    const rooms = await response.json();
-    console.log('Fetch Room: ', rooms);
-
+    const dbRooms = await prisma.room.findMany({ where: { camp_id } })
+    const rooms = dbRooms.map(r => ({
+        id: r.id,
+        member_ids: r.member_ids,
+        camp_id: r.camp_id ?? camp_id,
+    }))
     return <RoomTable rooms={rooms} />
 }
 
@@ -24,11 +23,10 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }>}) 
     const  { camp_id } = await params;
     const camp_idNum = await parseInt(camp_id, 10)
 
-    const response = await fetch(`${URL}/api/camps/${camp_idNum}`, {
-        cache: 'no-store'
-    })
-
-    const campInfo = await response.json();
+    const campInfo = await prisma.camp.findUnique({ where: { id: camp_idNum } })
+    if (!campInfo) {
+        notFound();
+    }
 
     return (
         <div className="px-4 sm:px-8 md:px-15 mt-8">

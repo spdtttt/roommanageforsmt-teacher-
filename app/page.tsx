@@ -1,13 +1,16 @@
 'use server'
 import CampList from "@/components/CampList"
-
-const URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+import { prisma } from "@/prisma";
 
 const CampPage = async () => {
-  const response = await fetch(`${URL}/api/camps`, {
-    cache: 'no-store'
-  });
-  const Camps = await response.json();
+  const dbCamps = await prisma.camp.findMany();
+  const Camps = dbCamps.map(c => ({
+    id: c.id,
+    title: c.title ?? '',
+    class: c.class ?? 0,
+    date: (c.date ?? new Date()).toISOString(),
+    max: c.max ?? 0,
+  }));
 
   return (
     <div className="mt-10">
