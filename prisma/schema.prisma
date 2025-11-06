@@ -13,3 +13,27 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+model Student {
+  id      Int     @id @default(autoincrement())
+  student_id      Int     @unique
+  name    String?
+  gender  String?
+  class   Int?
+}
+
+model Room {
+  id      Int     @id @default(autoincrement())
+  member_ids  Int[]
+  camp_id     Int?
+  camp        Camp?        @relation(fields: [camp_id], references: [id])
+}
+
+model Camp {
+  id      Int       @id @default(autoincrement())
+  title   String?
+  class   Int?
+  date    DateTime?
+  max     Int?
+  rooms   Room[]
+}
