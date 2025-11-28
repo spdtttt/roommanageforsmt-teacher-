@@ -1,6 +1,5 @@
 'use client'
 import Link from "next/link";
-import { useEffect } from "react";
 
 interface Camp {
     id: number;
@@ -17,8 +16,8 @@ const CampShow = ({ camps }: { camps : Camp[] }) => {
                 <div className="text-gray-500 text-lg flex justify-center">ยังไม่มีรายการค่าย คลิกปุ่ม + เพื่อเพิ่ม</div>
             ) : (
                 // Grid responsive: 1 col (mobile), 2 cols (tablet), 3 cols (desktop)
-                <div className="flex justify-center">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 justify-items-center md:justify-items-stretch w-full">
+                <div className="flex justify-center px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 justify-items-center md:justify-items-stretch w-full max-w-7xl">
                         {camps.map((item: Camp) => (
                             <div
                                 key={item.id}

@@ -1,4 +1,5 @@
 import RoomTable from "@/components/RoomTable";
+import UnassignedStudentsButton from "@/components/UnassignedStudentsButton";
 import { Suspense } from "react";
 import { BeatLoader } from "react-spinners";
 import { prisma } from "@/prisma";
@@ -44,6 +45,10 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }>}) 
                 backgroundColor: '#c7c7c7',
                 marginBottom: '30px'
             }}></div>
+
+            <div className="mb-5">
+                <UnassignedStudentsButton campId={camp_idNum} />
+            </div>
 
             <Suspense fallback={
                 <div className="flex justify-center mt-30">

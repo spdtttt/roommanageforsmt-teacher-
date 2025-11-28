@@ -17,6 +17,7 @@ interface Student {
 const RoomTable = ({ rooms }: { rooms: Room[] }) => {
     const [idToName, setIdToName] = useState<Record<number, string>>({})
     const [loading, setLoading] = useState(true)
+    const [availableStudent, setAvailableStudent] = useState([]);
 
     useEffect(() => {
         let isMounted = true
