@@ -17,7 +17,7 @@ const CampShow = ({ camps }: { camps : Camp[] }) => {
             ) : (
                 // Grid responsive: 1 col (mobile), 2 cols (tablet), 3 cols (desktop)
                 <div className="flex justify-center px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 justify-items-center md:justify-items-stretch w-full max-w-7xl">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 justify-items-center md:justify-items-stretch w-full">
                         {camps.map((item: Camp) => (
                             <div
                                 key={item.id}
