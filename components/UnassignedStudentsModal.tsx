@@ -115,7 +115,7 @@ const UnassignedStudentsModal = ({
         <div className="px-6 py-4 border-t flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+            className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors cursor-pointer"
           >
             ปิด
           </button>

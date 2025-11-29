@@ -4,7 +4,11 @@ import { prisma } from "@/prisma";
 export const revalidate = 0;
 
 const StudentPage = async () => {
-  const dbStudents = await prisma.student.findMany();
+  const dbStudents = await prisma.student.findMany({
+    orderBy: {
+      class: 'asc'
+    }
+  });
   const Students = dbStudents.map(s => ({
     id: s.id,
     student_id: s.student_id,

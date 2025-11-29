@@ -82,7 +82,7 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
                     <tr className="bg-gray-100">
                         <th className="border p-2">ที่</th>
                         <th className="border p-2">สมาชิก</th>
-                        <th className="border p-2">กิจกรรม</th>
+                        <th className="border p-2">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody>

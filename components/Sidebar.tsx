@@ -63,7 +63,10 @@ const Sidebar = () => {
                                     opacity-0 pointer-events-none 
                                     whitespace-nowrap 
                                     transition-all duration-300 
-                                    group-hover:opacity-100 group-hover:left-26`}>
+                                    group-hover:opacity-100 group-hover:left-26`}
+                                    style={{
+                                        fontFamily: 'Mitr, sans-serif'
+                                    }}>
                                     {item.label}
                                 </p>
                             )}
