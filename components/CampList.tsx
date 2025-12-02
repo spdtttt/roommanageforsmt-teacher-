@@ -1,8 +1,8 @@
 'use client'
-
 import { useState } from "react"
 import { FaCirclePlus } from "react-icons/fa6";
 import Select from "react-select";
+import { useRouter } from 'next/navigation'
 
 interface Camp {
   id: number;
@@ -18,8 +18,10 @@ interface CampListProps {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-
-  return date.toLocaleDateString('th-TH', {
+  // แก้ปัญหา timezone โดยบวก offset ของ Thailand (UTC+7)
+  const utcDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+  
+  return utcDate.toLocaleDateString('th-TH', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -54,18 +56,19 @@ interface EditModalProps {
   isEditModalOpen: boolean;
   onClose: () => void;
   campData: {
+    id: number;
     title: string;
     class: any;
     date: string;
     max: number;
   }
   setCampData: React.Dispatch<React.SetStateAction<{
+    id: number;
     title: string;
     class: any;
     date: string;
     max: number;
   }>>;
-  onSubmit: (e: React.FormEvent) => void;
 }
 
 const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModalProps) => {
@@ -176,11 +179,41 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
   )
 }
 
-const EditModal = ({ isEditModalOpen, onClose, campData, setCampData, onSubmit }: EditModalProps) => {
-  if (!isEditModalOpen) return null;
+const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModalProps) => {
+  const router = useRouter();
   
-  const handleSave = async () => {
+  if (!isEditModalOpen) return null;
+  const ISODate = campData.date;
+  const DateforInput = ISODate.split('T')[0];
 
+  const handleSave = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+
+      const response = await fetch(`/api/camps/${campData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: campData.title,
+          class: campData.class,
+          date: DateforInput + 'T00:00:00Z',
+          max: campData.max
+        })
+      });
+
+      if(!response.ok) {
+        console.error('Response not OK');
+      }
+
+      onClose();
+      window.location.reload();
+    } catch(err) {
+        console.error('Error editing details:', err);
+    } finally {
+        router.push('/')
+    }
   }
 
   return (
@@ -229,7 +262,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData, onSubmit }
             <input
               type="date"
               name="date"
-              value={campData.date}
+              value={DateforInput}
               onChange={(e) =>
                 setCampData({ ...campData, date: e.target.value })
               }
@@ -286,6 +319,7 @@ const CampList = ({ Camps }: CampListProps) => {
     max: Number('')
   })
   const [campData, setCampData] = useState({
+    id: Number(''),
     title: '',
     class: Number(''),
     date: '',
@@ -302,6 +336,7 @@ const CampList = ({ Camps }: CampListProps) => {
       max: Number(''),
     })
     setCampData({
+      id: Number(''),
       title: '',
       class: Number(''),
       date: '',
@@ -313,13 +348,10 @@ const CampList = ({ Camps }: CampListProps) => {
     e.preventDefault();
 
     try {
-      const dateTime = new Date(formData.date);
-      await dateTime.setHours(0, 0, 0, 0);
-
       const dataToSend = {
         title: formData.title,
         classroom: formData.class,
-        date: dateTime.toISOString(),
+        date: formData.date + 'T00:00:00Z',
         max: formData.max
       }
 
@@ -370,6 +402,7 @@ const CampList = ({ Camps }: CampListProps) => {
   
   const updateCampDataFocus = async (camp: any) => {
     setCampData({
+      id: camp.id,
       title: camp.title,
       class: camp.class,
       date: camp.date,
@@ -462,7 +495,6 @@ const CampList = ({ Camps }: CampListProps) => {
         onClose={onClose}
         campData={campData}
         setCampData={setCampData}
-        onSubmit={onSubmit}
       />
     </>
   )

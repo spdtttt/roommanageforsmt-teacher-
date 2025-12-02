@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: Request, context: { params: Promise<{ camp_id: string }> }) {
   try {
@@ -41,4 +41,39 @@ export async function DELETE(req: Request, context: { params: Promise<{ camp_id:
     console.error("Error deleting camp:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+
+export async function PUT(
+    request: NextRequest,
+    context: { params: Promise<{ camp_id: string }> }
+) {
+    try {
+        const body = await request.json();
+        const { title, class: classroom, date, max } = body;
+        
+        const { camp_id } = await context.params;
+        const id = parseInt(camp_id, 10);
+
+        const updatedCamp = await prisma.camp.update({
+            where: { id }, 
+            data: {
+                title,
+                class: classroom,
+                date: date,
+                max
+            }
+        });
+
+        return NextResponse.json({
+            success: true,
+            data: updatedCamp
+        })
+    } catch(err) {
+        console.error('Error Update Data:', err);
+        return NextResponse.json(
+            { error: 'ไม่สามารถอัพเดทได้' },
+            { status: 500 }
+        )
+    }
 }

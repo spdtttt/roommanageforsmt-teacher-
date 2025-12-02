@@ -31,11 +31,15 @@ const CampShow = ({ camps }: { camps : Camp[] }) => {
 
                                 <p className="text-sm sm:text-base text-gray-500">ห้อง: {item.class === 409 ? '4/9' : item.class === 509 ? '5/9' : '6/9'}</p>
                                 <p className="text-sm sm:text-base text-gray-500">จำนวนคนต่อห้อง: {item.max}</p>
-                                <p className="text-sm sm:text-base text-gray-500">วันที่: {new Date(item.date).toLocaleDateString("th-TH", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric"
-                                })}</p>
+                                <p className="text-sm sm:text-base text-gray-500">วันที่: {(() => {
+                                    const date = new Date(item.date);
+                                    const utcDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+                                    return utcDate.toLocaleDateString("th-TH", {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric"
+                                    });
+                                  })()}</p>
 
                                 <div className="flex justify-end mt-auto pt-3">
                                     <Link

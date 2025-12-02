@@ -1,9 +1,13 @@
 import { prisma } from "@/prisma"
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
-    const camps = await prisma.camp.findMany();
+    const camps = await prisma.camp.findMany({
+        orderBy: {
+            id: 'asc'
+        }
+    });
     return NextResponse.json(camps);
 }
 
