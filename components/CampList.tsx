@@ -576,7 +576,7 @@ const CampList = ({ Camps }: CampListProps) => {
 
       <button
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-6 right-6 hover:scale-110 transition-transform duration-300"
+        className="cursor-pointer fixed bottom-6 right-6 hover:scale-110 transition-transform duration-300"
       >
         <FaCirclePlus size={80} color="#2a4365" />
       </button>

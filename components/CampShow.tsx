@@ -41,7 +41,7 @@ const CampShow = ({ camps }: { camps : Camp[] }) => {
                                     });
                                   })()}</p>
 
-                                <div className="flex justify-end mt-auto pt-3">
+                                <div className="flex justify-end mt-auto pt-3 cursor-pointer">
                                     <Link
                                         href={`/camps/${item.id}`}
                                         className="text-base sm:text-lg hover:underline cursor-pointer"
