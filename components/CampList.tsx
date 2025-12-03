@@ -1,8 +1,9 @@
 'use client'
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { FaCirclePlus } from "react-icons/fa6";
 import Select from "react-select";
-import { useRouter } from 'next/navigation'
+import {Button} from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 interface Camp {
   id: number;
@@ -230,7 +231,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
           className="text-3xl font-semibold mb-4"
           style={{ fontFamily: 'Mitr, sans-serif' }}
         >
-          เพิ่มค่าย & กิจกรรม
+          แก้ไขค่าย & กิจกรรม
         </h2>
 
         <form className="space-y-4" onSubmit={handleSave}>
@@ -291,13 +292,13 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border rounded-md hover:bg-gray-100 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-2 border rounded-md hover:bg-gray-100 transition-colors"
             >
               ยกเลิก
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
             >
               บันทึก
             </button>
@@ -325,6 +326,45 @@ const CampList = ({ Camps }: CampListProps) => {
     date: '',
     max: Number('')
   })
+  const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
+  const [isSelected, setIsSelected] = useState(false);
+  const selectAllRef = useRef<HTMLInputElement | null>(null);
+
+  const handleCheck = (id: number) => {
+    setSelectedDelete((prev) => prev.includes(id)
+      ? prev.filter((item) => item !== id)
+      : [...prev, id]
+    );
+  };
+
+  const handleSelectDeleted = async () => {
+    try {
+      if (selectedDelete.length === 0) return;
+
+      const yesno = confirm("ต้องการลบค่ายที่เลือกจริงๆหรือไม่?")
+      if (!yesno) {
+        return
+      }
+
+      const resp = await fetch('/api/camps/delete-multiple', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedDelete })
+      })
+
+      if (!resp.ok) {
+        throw new Error('Failed to delete selected camps')
+      }
+
+      window.location.reload()
+    } catch (err) {
+      console.error('Error deleting selected camps:', err)
+      alert('เกิดข้อผิดพลาดในการลบข้อมูล')
+    } finally {
+      setIsSelected(false);
+      setSelectedDelete([]);
+    }
+  }
 
   function onClose() {
     setIsModalOpen(false);
@@ -417,19 +457,68 @@ const CampList = ({ Camps }: CampListProps) => {
 
   return (
     <>
-      {/* Filter class */}
-      <div className="mt-5">
-        <label className="mr-2 font-semibold">ห้องเรียน:</label>
-        <select
-          value={filterClass}
-          onChange={(e) => setFilterClass(e.target.value)}
-          className="border px-3 py-2 rounded-md"
-        >
-          <option value="all">ทั้งหมด</option>
-          <option value="409">4/9</option>
-          <option value="509">5/9</option>
-          <option value="609">6/9</option>
-        </select>
+      {/* Filter class && Selected Button */}
+      <div className={`mt-5 justify-between flex flex-col md:flex-row`}>
+        <div className="">
+          <label className="mr-2 font-semibold">ห้องเรียน:</label>
+          <select
+            value={filterClass}
+            onChange={(e) => setFilterClass(e.target.value)}
+            className="border px-3 py-2 rounded-md"
+          >
+            <option value="all">ทั้งหมด</option>
+            <option value="409">4/9</option>
+            <option value="509">5/9</option>
+            <option value="609">6/9</option>
+          </select>
+        </div>
+
+        <div className="flex gap-3 mt-4 md:mt-0">
+          {isSelected && (
+            <div
+              className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-lg"
+              onClick={handleSelectDeleted}
+            >
+              <p
+                style={{ fontFamily: 'Mitr, sans-serif' }}
+                className="text-white text-xl md:text-2xl text-center px-3 py-2"
+              >
+                ลบ
+              </p>
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => setIsSelected(!isSelected)}
+              className="bg-blue-500 cursor-pointer rounded-lg hover:bg-blue-600"
+            >
+              <p
+                style={{ fontFamily: 'Mitr, sans-serif' }}
+                className="text-white text-xl md:text-2xl text-center px-3 py-2"
+              >
+                {!isSelected ? 'เลือก' : 'ยกเลิก'}
+              </p>
+            </div>
+
+            {isSelected && (
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filteredCamps.length > 0 && selectedDelete.length === filteredCamps.length}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedDelete(filteredCamps.map((c: any) => c.id))
+                    } else {
+                      setSelectedDelete([])
+                    }
+                  }}
+                  className="w-8 h-8"
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Camps List Table */}
@@ -467,6 +556,16 @@ const CampList = ({ Camps }: CampListProps) => {
                     >
                       แก้ไข
                     </button>
+                    {isSelected && (
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedDelete.includes(item.id)}
+                          onChange={() => handleCheck(item.id)}
+                          className="w-6 h-6 bg-white border-2 rounded checked:bg-blue-700"
+                        />
+                      </div>
+                    )}
                   </div>
                 </td>
               </tr>

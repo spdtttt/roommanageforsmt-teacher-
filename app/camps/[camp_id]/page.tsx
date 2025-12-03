@@ -13,7 +13,15 @@ async function RoomData({
     params: { camp_id: string };
 }) {
     const camp_id = parseInt(params.camp_id, 10)
-    const dbRooms = await prisma.room.findMany({ where: { camp_id } })
+    const dbRooms = await prisma.room.findMany({ 
+        where: { 
+            camp_id 
+        },
+        orderBy: {
+            member_ids: 'asc'
+        }
+        
+    })
     const rooms = dbRooms.map(r => ({
         id: r.id,
         member_ids: r.member_ids,
