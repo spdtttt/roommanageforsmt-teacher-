@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import { FaCirclePlus } from "react-icons/fa6";
 import Select from "react-select";
-import {Button} from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 interface Camp {
@@ -21,7 +21,7 @@ const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   // แก้ปัญหา timezone โดยบวก offset ของ Thailand (UTC+7)
   const utcDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
-  
+
   return utcDate.toLocaleDateString('th-TH', {
     year: 'numeric',
     month: 'short',
@@ -122,7 +122,7 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
           <div>
             <label className="block text-sm font-medium mb-1">ห้อง</label>
 
-            <Select options={options} value={options.find(o => o.value === formData.class)} 
+            <Select options={options} value={options.find(o => o.value === formData.class)}
               onChange={(selectedOption) =>
                 setFormData({ ...formData, class: selectedOption ? selectedOption.value : null })
               } />
@@ -182,7 +182,7 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
 
 const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModalProps) => {
   const router = useRouter();
-  
+
   if (!isEditModalOpen) return null;
   const ISODate = campData.date;
   const DateforInput = ISODate.split('T')[0];
@@ -204,21 +204,21 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
         })
       });
 
-      if(!response.ok) {
+      if (!response.ok) {
         console.error('Response not OK');
       }
 
       onClose();
       window.location.reload();
-    } catch(err) {
-        console.error('Error editing details:', err);
+    } catch (err) {
+      console.error('Error editing details:', err);
     } finally {
-        router.push('/')
+      router.push('/')
     }
   }
 
   return (
-     <div
+    <div
       className="fixed inset-0 flex items-center justify-center z-50 p-5"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
       onClick={onClose} // ปิด modal เมื่อคลิกพื้นหลัง
@@ -252,7 +252,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
 
           <div>
             <label className="block text-sm font-medium mb-1">ห้อง</label>
-            <Select options={options} value={options.find(o => o.value === campData.class)} 
+            <Select options={options} value={options.find(o => o.value === campData.class)}
               onChange={(selectedOption) =>
                 setCampData({ ...campData, class: selectedOption ? selectedOption.value : null })
               } />
@@ -439,7 +439,7 @@ const CampList = ({ Camps }: CampListProps) => {
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
     }
   }
-  
+
   const updateCampDataFocus = async (camp: any) => {
     setCampData({
       id: camp.id,
@@ -545,18 +545,12 @@ const CampList = ({ Camps }: CampListProps) => {
                 <td className="md:p-3 p-2 text-center">
                   <div className="flex justify-center gap-2">
                     <button
-                      onClick={() => handleDelete(item.id)}
-                      className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
-                    >
-                      ลบ
-                    </button>
-                    <button
                       onClick={() => updateCampDataFocus(item)}
                       className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
                     >
                       แก้ไข
                     </button>
-                    {isSelected && (
+                    {isSelected ? (
                       <div className="flex items-center">
                         <input
                           type="checkbox"
@@ -565,7 +559,15 @@ const CampList = ({ Camps }: CampListProps) => {
                           className="w-6 h-6 bg-white border-2 rounded checked:bg-blue-700"
                         />
                       </div>
-                    )}
+                    ) : (
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                      >
+                        ลบ
+                      </button>
+                    )
+                    }
                   </div>
                 </td>
               </tr>

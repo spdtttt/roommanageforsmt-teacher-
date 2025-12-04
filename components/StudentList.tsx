@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react"
 import { FaCirclePlus } from "react-icons/fa6"
-import Select, { SingleValue } from "react-select"
+import Select from "react-select"
 
 type Student = {
     id: number;
@@ -152,6 +152,8 @@ const StudentList = ({ Students }: StudentListProps) => {
         gender: '',
         class: Number(''),
     })
+    const [isSelected, setIsSelected] = useState(false)
+    const [selectedDelete, setSelectedDelete] = useState<number[]>([])
 
     function onClose() {
         setIsModalOpen(false);
@@ -161,6 +163,39 @@ const StudentList = ({ Students }: StudentListProps) => {
             gender: '',
             class: Number(''),
         })
+    }
+
+    const handleCheck = (id: number) => {
+        setSelectedDelete((prev) => prev.includes(id)
+            ? prev.filter((item) => item !== id)
+            : [...prev, id]
+        );
+    };
+
+    const deletedSelect = async () => {
+        try {
+            if (selectedDelete.length === 0) return
+            if (!confirm('ต้องการลบนักเรียนที่เลือกหรือไม่?')) return
+
+            const response = await fetch(`/api/students/multiple-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ids: selectedDelete })
+            })
+
+            if (!response.ok) {
+                throw new Error('Error from API Students')
+            }
+
+            window.location.reload();
+        } catch(err) {
+            console.error('Error to fetch API Delete multiply students:', err)
+        } finally {
+            setIsSelected(false);
+            setSelectedDelete([]);
+        }
     }
 
     async function onSubmit(e: React.FormEvent) {
@@ -241,18 +276,67 @@ const StudentList = ({ Students }: StudentListProps) => {
     return (
         <>
             {/* Filter class */}
-            <div className="mt-5">
-                <label className="mr-2 font-semibold">ห้องเรียน:</label>
-                <select
-                    value={filterClass}
-                    onChange={(e) => setFilterClass(e.target.value)}
-                    className="border px-3 py-2 rounded-md"
-                >
-                    <option value="all">ทั้งหมด</option>
-                    <option value="409">4/9</option>
-                    <option value="509">5/9</option>
-                    <option value="609">6/9</option>
-                </select>
+            <div className="mt-5 flex justify-between flex-col md:flex-row">
+                <div className="">
+                    <label className="mr-2 font-semibold">ห้องเรียน:</label>
+                    <select
+                        value={filterClass}
+                        onChange={(e) => setFilterClass(e.target.value)}
+                        className="border px-3 py-2 rounded-md"
+                    >
+                        <option value="all">ทั้งหมด</option>
+                        <option value="409">4/9</option>
+                        <option value="509">5/9</option>
+                        <option value="609">6/9</option>
+                    </select>
+                </div>
+
+                <div className="flex gap-3 mt-4 md:mt-0">
+                    {isSelected && (
+                        <div
+                            onClick={deletedSelect}
+                            className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-lg"
+                        >
+                            <p
+                                style={{ fontFamily: 'Mitr, sans-serif' }}
+                                className="text-white text-xl md:text-2xl text-center px-3 py-2"
+                            >
+                                ลบ
+                            </p>
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-3">
+                        <div
+                            onClick={() => setIsSelected(!isSelected)}
+                            className="bg-blue-500 cursor-pointer rounded-lg hover:bg-blue-600"
+                        >
+                            <p
+                                style={{ fontFamily: 'Mitr, sans-serif' }}
+                                className="text-white text-xl md:text-2xl text-center px-3 py-2"
+                            >
+                                {!isSelected ? 'เลือก' : 'ยกเลิก'}
+                            </p>
+                        </div>
+
+                        {isSelected && (
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={filteredStudents.length > 0 && selectedDelete.length === filteredStudents.length}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedDelete(filteredStudents.map((c: any) => c.id))
+                                        } else {
+                                            setSelectedDelete([])
+                                        }
+                                    }}
+                                    className="w-8 h-8"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Student List Table */}
@@ -270,17 +354,28 @@ const StudentList = ({ Students }: StudentListProps) => {
                     <tbody>
                         {filteredStudents.map((item: any, index: any) => (
                             <tr key={item.id} className="hover:bg-gray-50">
-                                <td className="border p-2 md:p-3 text-center">{index+1}</td>
+                                <td className="border p-2 md:p-3 text-center">{index + 1}</td>
                                 <td className="border p-2 md:p-3">{item.student_id}</td>
                                 <td className="border p-2 md:p-3">{item.name}</td>
                                 <td className="border p-2 md:p-3 text-center">{item.class === 409 ? '4/9' : item.class === 509 ? '5/9' : '6/9'}</td>
-                                <td className="md:p-3 p-2 text-center">
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
-                                    >
-                                        ลบ
-                                    </button>
+                                <td className="md:p-3 p-2 text-center flex justify-center gap-3">
+                                    {isSelected ? (
+                                        <div className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedDelete.includes(item.id)}
+                                                onChange={() => handleCheck(item.id)}
+                                                className="w-6 h-6 bg-white border-2 rounded checked:bg-blue-700"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                                        >
+                                            ลบ
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
