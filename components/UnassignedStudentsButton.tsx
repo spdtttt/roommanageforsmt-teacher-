@@ -5,10 +5,12 @@ import UnassignedStudentsModal from './UnassignedStudentsModal'
 
 interface UnassignedStudentsButtonProps {
   campId: number
+  campInfo: any
 }
 
 const UnassignedStudentsButton = ({
   campId,
+  campInfo
 }: UnassignedStudentsButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -26,6 +28,7 @@ const UnassignedStudentsButton = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         campId={campId}
+        campInfo={campInfo}
       />
     </>
   )

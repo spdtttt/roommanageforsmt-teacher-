@@ -13,14 +13,14 @@ async function RoomData({
     params: { camp_id: string };
 }) {
     const camp_id = parseInt(params.camp_id, 10)
-    const dbRooms = await prisma.room.findMany({ 
-        where: { 
-            camp_id 
+    const dbRooms = await prisma.room.findMany({
+        where: {
+            camp_id
         },
         orderBy: {
             member_ids: 'asc'
         }
-        
+
     })
     const rooms = dbRooms.map(r => ({
         id: r.id,
@@ -30,8 +30,8 @@ async function RoomData({
     return <RoomTable rooms={rooms} />
 }
 
-const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }>}) => {
-    const  { camp_id } = await params;
+const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }> }) => {
+    const { camp_id } = await params;
     const camp_idNum = await parseInt(camp_id, 10)
 
     const campInfo = await prisma.camp.findUnique({ where: { id: camp_idNum } })
@@ -55,7 +55,7 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }>}) 
             }}></div>
 
             <div className="mb-5">
-                <UnassignedStudentsButton campId={camp_idNum} />
+                <UnassignedStudentsButton campId={camp_idNum} campInfo={campInfo} />
             </div>
 
             <Suspense fallback={
@@ -63,7 +63,7 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }>}) 
                     <BeatLoader color="#5a5c7e" size={18} />
                 </div>
             }>
-                <RoomData params={{ camp_id }}/>
+                <RoomData params={{ camp_id }} />
             </Suspense>
         </div>
     )
