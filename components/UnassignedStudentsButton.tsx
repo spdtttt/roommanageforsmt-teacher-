@@ -1,5 +1,5 @@
 'use client'
-
+import { MousePointerClick } from 'lucide-react'
 import { useState } from 'react'
 import UnassignedStudentsModal from './UnassignedStudentsModal'
 
@@ -15,12 +15,12 @@ const UnassignedStudentsButton = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <>
+    <div className='mb-6'>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="cursor-pointer px-4 font-semibold py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-[20px]"
-        style={{ fontFamily: 'Mitr, sans-serif' }}
+        className="flex gap-3 items-center cursor-pointer px-4 font-bold py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors text-[20px] font-[Prompt]"
       >
+        <MousePointerClick className='w-6 h-6' />
         ดูรายชื่อนักเรียนที่ยังไม่ได้ลงบันทึกห้องพัก
       </button>
 
@@ -30,7 +30,7 @@ const UnassignedStudentsButton = ({
         campId={campId}
         campInfo={campInfo}
       />
-    </>
+    </div>
   )
 }
 

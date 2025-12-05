@@ -1,7 +1,13 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 interface Student {
   id: number
@@ -92,24 +98,24 @@ const UnassignedStudentsModal = ({
       `}</style>
 
       <div
-        className="fixed inset-0 flex items-center justify-center z-50 p-5"
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+        className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
         onClick={onClose}
       >
         <div
-          className="bg-white rounded-lg w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col"
+          className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl h-300 max-h-[80vh] shadow-2xl overflow-hidden transform transition-all flex flex-col animate-scaleIn"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="px-6 py-4 border-b">
             <h2
-              className="text-2xl font-semibold"
-              style={{ fontFamily: 'Mitr, sans-serif' }}
+              className="text-2xl font-semibold font-[Prompt]"
             >
               รายชื่อนักเรียนที่ยังไม่ได้ลงบันทึกห้องพัก
             </h2>
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-4" data-print-content>
+            {/* For Print Header */}
             <div className="print-title hidden">
               รายชื่อนักเรียนที่ยังไม่ได้ลงห้องพัก {campInfo?.title} {campInfo?.class === 409 ? 'ม.4/9' : campInfo?.class === 509 ? 'ม.5/9' : 'ม.6/9'}
             </div>
@@ -119,45 +125,41 @@ const UnassignedStudentsModal = ({
                 <BeatLoader color="#5a5c7e" size={18} />
               </div>
             ) : students.length === 0 ? (
-              <div className="text-gray-500 text-center py-10">
+              <div className="text-gray-500 text-center py-10 font-[Prompt]">
                 ไม่มีนักเรียนที่ยังไม่ได้ลงบันทึกห้องพัก
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm md:text-base border-collapse border">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border p-2">ที่</th>
-                      <th className="border p-2">รหัสนักเรียน</th>
-                      <th className="border p-2">ชื่อ-นามสกุล</th>
-                      <th className="border p-2">เพศ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.map((student, index) => (
-                      <tr key={student.id} className="hover:bg-gray-50">
-                        <td className="border p-2 md:p-3 text-center">
-                          {index + 1}
-                        </td>
-                        <td className="border p-2 md:p-3 text-center">
-                          {student.student_id}
-                        </td>
-                        <td className="border p-2 md:p-3 text-center">{student.name ?? '-'}</td>
-                        <td className="border p-2 md:p-3 text-center">
-                          {student.gender == 'male' ? 'ชาย' : 'หญิง'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="Rooms Table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center" style={{ fontFamily: 'Prompt', width: '60px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
+                        <TableCell align="center" style={{ fontFamily: 'Prompt', width: '150px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>รหัสนักเรียน</TableCell>
+                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '300px' }}>ชื่อ - สกุล</TableCell>
+                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '200px' }}>เพศ</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {students.map((student, index) => (
+                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontSize: '15px' }} component="th" scope="row">{index + 1}</TableCell>
+                          <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.student_id}</TableCell>
+                          <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.name}</TableCell>
+                          <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.gender === 'male' ? 'ชาย' : 'หญิง'}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
             )}
           </div>
 
-          <div className="px-6 py-4 border-t flex justify-end gap-3">
+          <div className="font-[Prompt] font-semibold px-6 py-4 border-t flex justify-end gap-3">
             <button
               onClick={handlePrint}
-              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors cursor-pointer"
+              className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors cursor-pointer"
               disabled={students.length === 0}
             >
               พิมพ์

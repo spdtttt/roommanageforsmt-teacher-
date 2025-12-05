@@ -1,89 +1,65 @@
 'use client'
-
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
 import logo from '@/public/smt_logo.jpg'
-import { MdMenuOpen } from "react-icons/md"
-import { FaThList } from "react-icons/fa";
-import { MdManageAccounts } from "react-icons/md";
-import { FaUserCircle } from "react-icons/fa"
 import Link from "next/link"
+import { LayoutDashboard, Users, School } from 'lucide-react'
 
 const menuItems = [
-    {
-        icon: <FaThList size={30} />,
-        label: 'รายการค่าย',
-        detail: ''
-    },
-    {
-        icon: <FaThList size={30} />,
-        label: 'รายชื่อนักเรียน',
-        detail: 'students'
-    },
-    {
-        icon: <MdManageAccounts size={30} />,
-        label: 'จัดการห้องพัก',
-        detail: 'rooms'
-    }
+    { id: 'dashboard', icon: LayoutDashboard, label: 'แดชบอร์ด', details: '' },
+    { id: 'students', icon: Users, label: 'นักเรียน', details: 'students' },
+    { id: 'rooms', icon: School, label: 'ห้อง', details: 'rooms' },
 ]
 
 const Sidebar = () => {
-    const [open, setOpen] = useState(false);
     const pathname = usePathname();
 
     return (
         <>
-        {/* Backdrop for mobile when sidebar is open */}
-        {open && (
-            <div
-                className="fixed inset-0 z-40 bg-black/40 md:hidden"
-                onClick={() => setOpen(false)}
-            />
-        )}
-        <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md min-h-screen h-auto p-3 flex flex-col duration-500 ${open ? 'w-60 md:w-75' : 'w-20 md:w-30'} bg-blue-900 text-white`} >
-            {/* Header */}
-            <div className={`px-3 py-2 h-25 flex items-center ${open ? 'justify-between' : 'justify-center'}`}>
-                <Image src={logo} alt="Logo" className={`${open ? 'w-10' : 'w-0'} rounded-md`} />
-                <div><MdMenuOpen size={40} className={`duration-500 cursor-pointer ${!open && 'rotate-180'}`} onClick={() => setOpen(!open)} /></div>
-            </div>
-
-            {/* Body */}
-            <ul className="flex-1">
-                {
-                    menuItems.map((item, index) => {
-                        const isActive = pathname === `/${item.detail}` || (item.detail === '' && pathname === '/');
-                        return (
-                        <Link href={`/${item.detail}`} key={index} className={`${!open && 'justify-center'} px-3 my-3 h-20 ${isActive ? 'bg-blue-950' : 'hover:bg-blue-950'} rounded-md duration-300 cursor-pointer flex items-center gap-4 group`}>
-                            <div className={`${!open && 'absolute'}`}>{item.icon}</div>
-                            <p className={`${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>{item.label}</p>
-                            {!open && (
-                                <p className={`absolute left-16 bg-white text-gray-800 
-                                    shadow-lg rounded-md px-3 py-1 
-                                    opacity-0 pointer-events-none 
-                                    whitespace-nowrap 
-                                    transition-all duration-300 
-                                    group-hover:opacity-100 group-hover:left-26`}
-                                    style={{
-                                        fontFamily: 'Mitr, sans-serif'
-                                    }}>
-                                    {item.label}
-                                </p>
-                            )}
-                        </Link>
-                    )})
-                }
-            </ul>
-
-            {/* Footer */}
-            <div className={`flex mb-2 items-center gap-4 justify-center`}>
-                <div className={`${!open && 'absolute'}`}><FaUserCircle size={40} /></div>
-                <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
-                    <p>โรงเรียนเมืองสุราษฎร์ธานี</p>
-                    <p className="text-xs">warunya@mst.ac.th</p>
+            <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md min-h-screen h-auto flex flex-col duration-500 w-20 lg:w-67 bg-[#0A2A65] text-white`} >
+                {/* Header */}
+                <div className={`h-[93px] border-blue-900 flex items-center gap-4 justify-center lg:justify-start lg:px-7 border-b`}>
+                    <div className="w-13 h-13 rounded-xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                        <Image src={logo} alt="logo" className="w-13 h-13 rounded-lg" />
+                    </div>
+                    <span className="hidden lg:block text-2xl font-semibold text-white" style={{
+                        fontFamily: 'Prompt'
+                    }}>S.M.T Camp</span>
                 </div>
-            </div>
-        </nav>
+
+                {/* Body */}
+                <div className="flex-1 py-6 px-3">
+                    <ul className="space-y-3">
+                        {
+                            menuItems.map((item, index) => {
+                                const Icon = item.icon;
+                                const isActive = pathname === `/${item.details}` || (item.details === '' && pathname === '/');
+                                return (
+                                    <Link href={`/${item.details}`} key={index} className={`${isActive && 'bg-[#3c83f5] text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]'} text-[#b5c0d1] w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 hover:bg-[#0e327a] hover:text-white hover:shadow-lg`}>
+                                        <Icon className="w-5 h-5 flex-shrink-0" />
+                                        <span style={{
+                                            fontFamily: 'Prompt'
+                                        }} className={`hidden lg:block font-medium`}>{item.label}</span>
+                                    </Link>
+                                )
+                            })
+                        }
+                    </ul>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-[#154b8c] font-[Prompt]">
+                    <div className="flex items-center gap-4 px-2">
+                        <div className="w-10 h-10 rounded-full bg-[#154b8c] flex items-center justify-center">
+                            <span className="text-sm font-semibold text-sidebar-foreground">ครู</span>
+                        </div>
+                        <div className="hidden lg:block flex-1">
+                            <p className="text-sm font-medium text-sidebar-foreground">คุณครู</p>
+                            <p className="text-xs text-sidebar-foreground/60">ผู้ดูแลระบบ</p>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </>
     )
 }

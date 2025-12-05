@@ -13,22 +13,24 @@ const CampPage = async () => {
     max: c.max ?? 0,
   }));
 
+  const dbStudents = await prisma.room.findMany({
+    select: {
+      member_ids: true,
+    }
+  });
+
+  // รวม member_ids ทั้งหมดให้อยู่ใน array เดียวกัน (แค่ตัวเลขทั้งหมด)
+  const allMemberIds = dbStudents.flatMap(r => r.member_ids ?? []);
+
   return (
-    <div className="mt-10">
-      <div className="mb-3" style={{
-        fontFamily: 'Mitr, sans-serif',
-        fontWeight: '500',
-        fontSize: '40px'
-      }}>รายการค่าย & กิจกรรมทั้งหมด</div>
-
-      <div style={{
-        width: '85%',
-        height: '1.5px',
-        backgroundColor: '#c7c7c7',
-        marginBottom: '30px'
-      }}></div>
-
-      <CampList Camps={Camps} />
+    <div className="w-full h-full flex flex-col">
+      <header className="py-5 bg-white border-b border-[#e1e7ef] flex items-center justify-between px-6 lg:px-8 w-full">
+        <div>
+          <h1 className="text-2xl font-bold text-black font-[Prompt]">รายการค่าย & กิจกรรม</h1>
+          <p className="text-sm font-[Prompt] text-gray-500">จัดการกิจกรรมและค่ายต่างๆ ของห้องเรียน S.M.T โรงเรียนเมืองสุราษฎร์ธานี</p>
+        </div>
+      </header>
+      <CampList Camps={Camps} Students={allMemberIds} />
     </div>
   )
 }

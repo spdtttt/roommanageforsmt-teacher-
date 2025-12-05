@@ -1,7 +1,15 @@
 'use client'
 import { useState } from "react"
-import { FaCirclePlus } from "react-icons/fa6"
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import Select from "react-select"
+import { Users, Filter, Plus, Trash, MousePointerClick } from "lucide-react"
+import StatCard from "./StatCard"
 
 type Student = {
     id: number;
@@ -33,7 +41,14 @@ interface AddModalProps {
     onSubmit: (e: React.FormEvent) => void;
 }
 
-const optionsClass = [
+const options = [
+    { value: 409, label: '4/9' },
+    { value: 509, label: '5/9' },
+    { value: 609, label: '6/9' },
+]
+
+const optionsforSelect = [
+    { value: 'all', label: 'ทั้งหมด' },
     { value: 409, label: '4/9' },
     { value: 509, label: '5/9' },
     { value: 609, label: '6/9' },
@@ -54,24 +69,28 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-5"
-            style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
             onClick={onClose} // ปิด modal เมื่อคลิกพื้นหลัง
         >
             <div
-                className="bg-white px-10 py-6 rounded-lg w-full max-w-md"
+                className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
                 onClick={(e) => e.stopPropagation()} // ป้องกันการปิด modal เมื่อคลิกภายใน
             >
-                <h2
-                    className="text-3xl font-semibold mb-4"
-                    style={{ fontFamily: 'Mitr, sans-serif' }}
-                >
-                    เพิ่มนักเรียน
-                </h2>
+                {/* Header */}
+                <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800">
+                    <h2
+                        className="text-2xl font-bold text-white font-[Prompt]"
+                    >
+                        เพิ่มนักเรียน
+                    </h2>
+                    <p className="text-blue-100 text-sm mt-1 font-[Prompt]">สร้างนักเรียนใหม่</p>
+                </div>
 
-                <form className="space-y-4" onSubmit={handleSubmit}>
+                {/* Body */}
+                <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSubmit}>
                     <div>
-                        <label className="block text-sm font-medium mb-1">รหัสนักเรียน</label>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">รหัสนักเรียน</label>
                         <input
                             type="text"
                             name="studentID"
@@ -79,14 +98,17 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
                             onChange={(e) =>
                                 setFormData({ ...formData, student_id: e.target.value })
                             }
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900 placeholder-gray-400"
                             placeholder="กรอกรหัสนักเรียน"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">ชื่อ</label>
+                        <label
+                            className="block text-sm font-semibold text-gray-800 mb-2"
+                        >ชื่อ
+                        </label>
                         <input
                             type="text"
                             name="name"
@@ -94,45 +116,73 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
                             onChange={(e) =>
                                 setFormData({ ...formData, name: e.target.value })
                             }
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900 placeholder-gray-400"
                             placeholder="กรอกชื่อ"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">เพศ</label>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2"
+                        >เพศ</label>
                         <Select
                             options={optionsGender}
                             value={optionsGender.find(o => o.value === formData.gender)}
                             onChange={(selectedOption =>
                                 setFormData({ ...formData, gender: selectedOption ? selectedOption.value : '' })
                             )}
+                            placeholder="เลือกเพศ"
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderRadius: '0.5rem',
+                                    borderWidth: '2px',
+                                    borderColor: state.isFocused ? '#3b82f6' : '#e5e7eb',
+                                    boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.1)' : 'none',
+                                    padding: '0.375rem 0.5rem',
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s ease'
+                                })
+                            }}
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">ห้อง</label>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">ห้อง</label>
                         <Select
-                            options={optionsClass}
-                            value={optionsClass.find(o => o.value === formData.class)}
+                            options={options}
+                            value={options.find(o => o.value === formData.class)}
                             onChange={(selectedOption =>
                                 setFormData({ ...formData, class: selectedOption ? selectedOption.value : Number('') })
                             )}
+                            placeholder="เลือกห้อง"
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderRadius: '0.5rem',
+                                    borderWidth: '2px',
+                                    borderColor: state.isFocused ? '#3b82f6' : '#e5e7eb',
+                                    boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.1)' : 'none',
+                                    padding: '0.375rem 0.5rem',
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s ease'
+                                })
+                            }}
                         />
                     </div>
 
-                    <div className="flex gap-3 pt-4">
+                    {/* Footer */}
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 border rounded-md hover:bg-gray-100 transition-colors"
+                            className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
                         >
                             ยกเลิก
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                            className="flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
                         >
                             บันทึก
                         </button>
@@ -190,7 +240,7 @@ const StudentList = ({ Students }: StudentListProps) => {
             }
 
             window.location.reload();
-        } catch(err) {
+        } catch (err) {
             console.error('Error to fetch API Delete multiply students:', err)
         } finally {
             setIsSelected(false);
@@ -275,128 +325,132 @@ const StudentList = ({ Students }: StudentListProps) => {
 
     return (
         <>
-            {/* Filter class */}
-            <div className="mt-5 flex justify-between flex-col md:flex-row">
-                <div className="">
-                    <label className="mr-2 font-semibold">ห้องเรียน:</label>
-                    <select
-                        value={filterClass}
-                        onChange={(e) => setFilterClass(e.target.value)}
-                        className="border px-3 py-2 rounded-md"
-                    >
-                        <option value="all">ทั้งหมด</option>
-                        <option value="409">4/9</option>
-                        <option value="509">5/9</option>
-                        <option value="609">6/9</option>
-                    </select>
+            <div className="p-6 lg:p-8">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <StatCard
+                        title="นักเรียนทั้งหมด"
+                        value={`${Students.length} คน`}
+                        icon={Users}
+                        variant="primary"
+                    />
+                    <StatCard
+                        title="ม.4/9"
+                        value={`${Students.filter((student) => student.class === 409).length} คน`}
+                        variant="default"
+                    />
+                    <StatCard
+                        title="ม.5/9"
+                        value={`${Students.filter((student) => student.class === 509).length} คน`}
+                        variant="default"
+                    />
+                    <StatCard
+                        title="ม.6/9"
+                        value={`${Students.filter((student) => student.class === 609).length} คน`}
+                        variant="default"
+                    />
                 </div>
 
-                <div className="flex gap-3 mt-4 md:mt-0">
-                    {isSelected && (
-                        <div
-                            onClick={deletedSelect}
-                            className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-lg"
-                        >
-                            <p
-                                style={{ fontFamily: 'Mitr, sans-serif' }}
-                                className="text-white text-xl md:text-2xl text-center px-3 py-2"
-                            >
-                                ลบ
-                            </p>
-                        </div>
-                    )}
-
+                {/* Filter Button */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 text-sm text-gray-500 font-[Prompt]">
+                            <Filter className="w-4 h-4" />
+                            <span className="font-medium">ห้องเรียน:</span>
+                            <Select placeholder='เลือก' options={optionsforSelect} value={optionsforSelect.find(o => o.value === Number(filterClass))}
+                                onChange={(selectedOption) =>
+                                    setFilterClass(selectedOption ? String(selectedOption.value) : 'all')
+                                }
+                                defaultValue={optionsforSelect[0]}
+                            />
+                        </div>
+                    </div>
+                    <div className="gap-4 text-white cursor-pointer font-[Prompt] flex">
+                        <div onClick={() => setIsModalOpen(true)} className={`${isSelected ? 'hidden' : 'block'} bg-[#0e327a] font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}>
+                            <Plus className="w-4 h-4" />
+                            <span>เพิ่มนักเรียนใหม่</span>
+                        </div>
                         <div
                             onClick={() => setIsSelected(!isSelected)}
-                            className="bg-blue-500 cursor-pointer rounded-lg hover:bg-blue-600"
+                            className="flex bg-yellow-500 hover:bg-yellow-600 p-2 sm:p-3 items-center rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 font-bold"
                         >
-                            <p
-                                style={{ fontFamily: 'Mitr, sans-serif' }}
-                                className="text-white text-xl md:text-2xl text-center px-3 py-2"
-                            >
-                                {!isSelected ? 'เลือก' : 'ยกเลิก'}
-                            </p>
+                            <MousePointerClick className="w-4 h-4" />
+                            <span>{!isSelected ? 'เลือก' : 'ยกเลิก'}</span>
                         </div>
-
-                        {isSelected && (
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    checked={filteredStudents.length > 0 && selectedDelete.length === filteredStudents.length}
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            setSelectedDelete(filteredStudents.map((c: any) => c.id))
-                                        } else {
-                                            setSelectedDelete([])
-                                        }
-                                    }}
-                                    className="w-8 h-8"
-                                />
-                            </div>
-                        )}
+                        <div
+                            className={`${isSelected ? 'block' : 'hidden'} bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
+                            onClick={deletedSelect}
+                        >
+                            <Trash className="w-4 h-4" />
+                            <span>ลบรายการที่เลือก</span>
+                        </div>
+                        <div className={`${isSelected ? 'block' : 'hidden'} flex items-center`}>
+                            <input
+                                type="checkbox"
+                                checked={filteredStudents.length > 0 && selectedDelete.length === filteredStudents.length}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setSelectedDelete(filteredStudents.map((c: any) => c.id))
+                                    } else {
+                                        setSelectedDelete([])
+                                    }
+                                }}
+                                className="w-[48px] h-[48px]"
+                            />
+                        </div>
                     </div>
                 </div>
+
+                {/* Students List Table */}
+                <div>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="Students Table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', width: '60px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', width: '170px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>รหัสนักเรียน</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '700px' }}>ชื่อ</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ห้อง</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '300px' }}>จัดการ</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredStudents.map((student, index) => (
+                                    <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontSize: '15px' }} component="th" scope="row">{index + 1}</TableCell>
+                                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.student_id}</TableCell>
+                                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.name}</TableCell>
+                                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{student.class === 609 ? '6/9' : student.class === 509 ? '5/9' : '4/9'}</TableCell>
+                                        <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>
+                                            <div className="flex justify-center gap-2">
+                                                {isSelected ? (
+                                                    <div className="flex items-center">
+                                                        <input type="checkbox" checked={selectedDelete.includes(student.id)} onChange={() => handleCheck(student.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a]" />
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <button onClick={() => handleDelete(student.id)} className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                                                            ลบ
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+
+                <AddModal
+                    isOpen={isModalOpen}
+                    onClose={onClose}
+                    formData={formData}
+                    setFormData={setFormData}
+                    onSubmit={onSubmit}
+                />
             </div>
-
-            {/* Student List Table */}
-            <div className="mt-5 overflow-x-auto">
-                <table className="min-w-full text-sm md:text-base border-collapse border">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border p-2">ที่</th>
-                            <th className="border p-2">รหัสนักเรียน</th>
-                            <th className="border p-2">ชื่อ</th>
-                            <th className="border p-2">ห้อง</th>
-                            <th className="border p-2 text-center">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredStudents.map((item: any, index: any) => (
-                            <tr key={item.id} className="hover:bg-gray-50">
-                                <td className="border p-2 md:p-3 text-center">{index + 1}</td>
-                                <td className="border p-2 md:p-3">{item.student_id}</td>
-                                <td className="border p-2 md:p-3">{item.name}</td>
-                                <td className="border p-2 md:p-3 text-center">{item.class === 409 ? '4/9' : item.class === 509 ? '5/9' : '6/9'}</td>
-                                <td className="md:p-3 p-2 text-center flex justify-center gap-3">
-                                    {isSelected ? (
-                                        <div className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedDelete.includes(item.id)}
-                                                onChange={() => handleCheck(item.id)}
-                                                className="w-6 h-6 bg-white border-2 rounded checked:bg-blue-700"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
-                                        >
-                                            ลบ
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            <button
-                onClick={() => setIsModalOpen(true)}
-                className="fixed bottom-6 right-6 hover:scale-110 transition-transform duration-300"
-            >
-                <FaCirclePlus size={80} color="#2a4365" />
-            </button>
-
-            <AddModal
-                isOpen={isModalOpen}
-                onClose={onClose}
-                formData={formData}
-                setFormData={setFormData}
-                onSubmit={onSubmit}
-            />
         </>
     )
 }

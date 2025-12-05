@@ -1,9 +1,16 @@
 'use client'
-import { useState, useEffect, useRef } from "react"
-import { FaCirclePlus } from "react-icons/fa6";
+import { useState, useRef } from "react"
 import Select from "react-select";
-import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import StatCard from "./StatCard";
+import { CalendarDays, GraduationCap, Users, Filter, Plus, MousePointerClick, Trash } from "lucide-react";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 interface Camp {
   id: number;
@@ -15,7 +22,10 @@ interface Camp {
 
 interface CampListProps {
   Camps: Camp[];
+  // Optional array of student IDs (numbers) gathered from rooms
+  Students?: number[];
 }
+
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -28,6 +38,13 @@ const formatDate = (dateString: string) => {
     day: 'numeric'
   })
 }
+
+const optionsforSelect = [
+  { value: 'all', label: 'ทั้งหมด' },
+  { value: 409, label: '4/9' },
+  { value: 509, label: '5/9' },
+  { value: 609, label: '6/9' },
+]
 
 const options = [
   { value: 409, label: '4/9' },
@@ -59,14 +76,14 @@ interface EditModalProps {
   campData: {
     id: number;
     title: string;
-    class: any;
+    class: number | null;
     date: string;
     max: number;
   }
   setCampData: React.Dispatch<React.SetStateAction<{
     id: number;
     title: string;
-    class: any;
+    class: number | null;
     date: string;
     max: number;
   }>>;
@@ -88,48 +105,67 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 p-5"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
-      onClick={onClose} // ปิด modal เมื่อคลิกพื้นหลัง
+      className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+      onClick={onClose} // ปิดเมื่อคลิกพื้นหลัง
     >
       <div
-        className="bg-white px-10 py-6 rounded-lg w-full max-w-md"
-        onClick={(e) => e.stopPropagation()} // ป้องกันการปิด modal เมื่อคลิกภายใน
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
+        onClick={(e) => e.stopPropagation()}
       >
-        <h2
-          className="text-3xl font-semibold mb-4"
-          style={{ fontFamily: 'Mitr, sans-serif' }}
-        >
-          เพิ่มค่าย & กิจกรรม
-        </h2>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800">
+          <h2
+            className="text-2xl font-bold text-white font-[Prompt]"
+          >
+            เพิ่มค่าย & กิจกรรม
+          </h2>
+          <p className="text-blue-100 text-sm mt-1 font-[Prompt]">สร้างกิจกรรมใหม่</p>
+        </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        {/* Body */}
+        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium mb-1">ชื่อกิจกรรม</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">ชื่อกิจกรรม</label>
             <input
               type="text"
               name="title"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
+              placeholder="กรอกชื่อกิจกรรม"
               value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="กรอกชื่อกิจกรรม"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">ห้อง</label>
-
-            <Select options={options} value={options.find(o => o.value === formData.class)}
+            <label className="block text-sm font-semibold text-gray-800 mb-2">ห้อง</label>
+            <Select
+              options={options}
+              value={options.find(o => o.value === formData.class)}
               onChange={(selectedOption) =>
                 setFormData({ ...formData, class: selectedOption ? selectedOption.value : null })
-              } />
+              }
+              placeholder="เลือกห้อง"
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  borderRadius: '0.5rem',
+                  borderWidth: '2px',
+                  borderColor: state.isFocused ? '#3b82f6' : '#e5e7eb',
+                  boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.1)' : 'none',
+                  padding: '0.375rem 0.5rem',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.2s ease'
+                })
+              }}
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">วันที่</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่</label>
             <input
               type="date"
               name="date"
@@ -138,13 +174,13 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
               onChange={(e) =>
                 setFormData({ ...formData, date: e.target.value })
               }
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">จำนวนคนต่อห้อง</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">จำนวนคนต่อห้อง</label>
             <input
               type="number"
               name="max"
@@ -152,24 +188,25 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
               onChange={(e) =>
                 setFormData({ ...formData, max: Number(e.target.value) })
               }
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
               placeholder="กรอกจำนวนคน"
               min="1"
               required
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
+          {/* Footer */}
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border rounded-md hover:bg-gray-100 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
             >
               ยกเลิก
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
             >
               บันทึก
             </button>
@@ -219,28 +256,32 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 p-5"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
-      onClick={onClose} // ปิด modal เมื่อคลิกพื้นหลัง
+      className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+      onClick={onClose}
     >
       <div
-        className="bg-white px-10 py-6 rounded-lg w-full max-w-md"
-        onClick={(e) => e.stopPropagation()} // ป้องกันการปิด modal เมื่อคลิกภายใน
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
+        onClick={(e) => e.stopPropagation()}
       >
-        <h2
-          className="text-3xl font-semibold mb-4"
-          style={{ fontFamily: 'Mitr, sans-serif' }}
-        >
-          แก้ไขค่าย & กิจกรรม
-        </h2>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800">
+          <h2
+            className="text-2xl font-bold text-white font-[Prompt]"
+          >
+            แก้ไขค่าย & กิจกรรม
+          </h2>
+          <p className="text-blue-100 text-sm mt-1 font-[Prompt]">อัปเดตข้อมูลกิจกรรม</p>
+        </div>
 
-        <form className="space-y-4" onSubmit={handleSave}>
+        {/* Body */}
+        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSave}>
           <div>
-            <label className="block text-sm font-medium mb-1">ชื่อกิจกรรม</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">ชื่อกิจกรรม</label>
             <input
               type="text"
               name="title"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
               placeholder="กรอกชื่อกิจกรรม"
               value={campData.title}
               onChange={(e) => {
@@ -251,15 +292,31 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">ห้อง</label>
-            <Select options={options} value={options.find(o => o.value === campData.class)}
+            <label className="block text-sm font-semibold text-gray-800 mb-2">ห้อง</label>
+            <Select
+              options={options}
+              value={options.find(o => o.value === campData.class)}
               onChange={(selectedOption) =>
-                setCampData({ ...campData, class: selectedOption ? selectedOption.value : null })
-              } />
+                setCampData({ ...campData, class: selectedOption && typeof selectedOption.value === 'number' ? selectedOption.value : null })
+              }
+              placeholder="เลือกห้อง..."
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  borderRadius: '0.5rem',
+                  borderWidth: '2px',
+                  borderColor: state.isFocused ? '#3b82f6' : '#e5e7eb',
+                  boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.1)' : 'none',
+                  padding: '0.375rem 0.5rem',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.2s ease'
+                })
+              }}
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">วันที่</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่</label>
             <input
               type="date"
               name="date"
@@ -267,13 +324,13 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
               onChange={(e) =>
                 setCampData({ ...campData, date: e.target.value })
               }
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">จำนวนคนต่อห้อง</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">จำนวนคนต่อห้อง</label>
             <input
               type="number"
               name="max"
@@ -281,24 +338,25 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
               onChange={(e) =>
                 setCampData({ ...campData, max: Number(e.target.value) })
               }
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
               placeholder="กรอกจำนวนคน"
               min="1"
               required
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
+          {/* Footer */}
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 cursor-pointer px-4 py-2 border rounded-md hover:bg-gray-100 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
             >
               ยกเลิก
             </button>
             <button
               type="submit"
-              className="flex-1 cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
             >
               บันทึก
             </button>
@@ -309,7 +367,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
   )
 }
 
-const CampList = ({ Camps }: CampListProps) => {
+const CampList = ({ Camps, Students = [] }: CampListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [filterClass, setFilterClass] = useState('all');
@@ -322,13 +380,12 @@ const CampList = ({ Camps }: CampListProps) => {
   const [campData, setCampData] = useState({
     id: Number(''),
     title: '',
-    class: Number(''),
+    class: null as number | null,
     date: '',
     max: Number('')
   })
   const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
   const [isSelected, setIsSelected] = useState(false);
-  const selectAllRef = useRef<HTMLInputElement | null>(null);
 
   const handleCheck = (id: number) => {
     setSelectedDelete((prev) => prev.includes(id)
@@ -457,131 +514,129 @@ const CampList = ({ Camps }: CampListProps) => {
 
   return (
     <>
-      {/* Filter class && Selected Button */}
-      <div className={`mt-5 justify-between flex flex-col md:flex-row`}>
-        <div className="">
-          <label className="mr-2 font-semibold">ห้องเรียน:</label>
-          <select
-            value={filterClass}
-            onChange={(e) => setFilterClass(e.target.value)}
-            className="border px-3 py-2 rounded-md"
-          >
-            <option value="all">ทั้งหมด</option>
-            <option value="409">4/9</option>
-            <option value="509">5/9</option>
-            <option value="609">6/9</option>
-          </select>
+      <div className="p-6 lg:p-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="กิจกรรมทั้งหมด"
+            value={Camps.length}
+            icon={CalendarDays}
+            variant="primary"
+          />
+          <StatCard
+            title="นักเรียนที่บันทึกแล้ว"
+            value={Students.length}
+            icon={Users}
+            variant="default"
+          />
+          <StatCard
+            title="ห้องที่รองรับ"
+            value="3"
+            icon={GraduationCap}
+            variant="default"
+          />
         </div>
 
-        <div className="flex gap-3 mt-4 md:mt-0">
-          {isSelected && (
-            <div
-              className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-lg"
-              onClick={handleSelectDeleted}
-            >
-              <p
-                style={{ fontFamily: 'Mitr, sans-serif' }}
-                className="text-white text-xl md:text-2xl text-center px-3 py-2"
-              >
-                ลบ
-              </p>
-            </div>
-          )}
-
+        {/* Filter Button */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-gray-500 font-[Prompt]">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium">ห้องเรียน:</span>
+              <Select placeholder='เลือก' options={optionsforSelect} value={optionsforSelect.find(o => o.value === Number(filterClass))}
+                onChange={(selectedOption) =>
+                  setFilterClass(selectedOption ? String(selectedOption.value) : 'all')
+                }
+                defaultValue={optionsforSelect[0]}
+              />
+            </div>
+          </div>
+          <div className="gap-4 text-white cursor-pointer font-[Prompt] flex">
+            <div onClick={() => setIsModalOpen(true)} className={`${isSelected ? 'hidden' : 'block'} bg-[#0e327a] font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}>
+              <Plus className="w-4 h-4" />
+              <span>เพิ่มกิจกรรมใหม่</span>
+            </div>
             <div
               onClick={() => setIsSelected(!isSelected)}
-              className="bg-blue-500 cursor-pointer rounded-lg hover:bg-blue-600"
+              className="flex bg-yellow-500 hover:bg-yellow-600 p-2 sm:p-3 items-center rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 font-bold"
             >
-              <p
-                style={{ fontFamily: 'Mitr, sans-serif' }}
-                className="text-white text-xl md:text-2xl text-center px-3 py-2"
-              >
-                {!isSelected ? 'เลือก' : 'ยกเลิก'}
-              </p>
+              <MousePointerClick className="w-4 h-4" />
+              <span>{!isSelected ? 'เลือก' : 'ยกเลิก'}</span>
             </div>
-
-            {isSelected && (
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={filteredCamps.length > 0 && selectedDelete.length === filteredCamps.length}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedDelete(filteredCamps.map((c: any) => c.id))
-                    } else {
-                      setSelectedDelete([])
-                    }
-                  }}
-                  className="w-8 h-8"
-                />
-              </div>
-            )}
+            <div
+              className={`${isSelected ? 'block' : 'hidden'} bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
+              onClick={handleSelectDeleted}
+            >
+              <Trash className="w-4 h-4" />
+              <span>ลบรายการที่เลือก</span>
+            </div>
+            <div className={`${isSelected ? 'block' : 'hidden'} flex items-center`}>
+              <input
+                type="checkbox"
+                checked={filteredCamps.length > 0 && selectedDelete.length === filteredCamps.length}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedDelete(filteredCamps.map((c: any) => c.id))
+                  } else {
+                    setSelectedDelete([])
+                  }
+                }}
+                className="w-[48px] h-[48px]"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Camps List Table */}
-      <div className="mt-5 overflow-x-auto">
-        <table className="min-w-full text-sm md:text-base border-collapse border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">ที่</th>
-              <th className="border p-2">ชื่อกิจกรรม</th>
-              <th className="border p-2">ห้อง</th>
-              <th className="border p-2">วันที่</th>
-              <th className="border p-2">จำนวนคนต่อห้อง</th>
-              <th className="border p-2 text-center">จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCamps.map((item: any, index: any) => (
-              <tr key={item.id} className="hover:bg-gray-50">
-                <td className="border p-2 md:p-3 text-center">{index + 1}</td>
-                <td className="border p-2 md:p-3">{item.title}</td>
-                <td className="border p-2 md:p-3 text-center">{item.class === 409 ? '4/9' : item.class === 509 ? '5/9' : '6/9'}</td>
-                <td className="border p-2 md:p-3 text-center">{formatDate(item.date)}</td>
-                <td className="border p-2 md:p-3 text-center">{item.max}</td>
-                <td className="md:p-3 p-2 text-center">
-                  <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() => updateCampDataFocus(item)}
-                      className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
-                    >
-                      แก้ไข
-                    </button>
-                    {isSelected ? (
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedDelete.includes(item.id)}
-                          onChange={() => handleCheck(item.id)}
-                          className="w-6 h-6 bg-white border-2 rounded checked:bg-blue-700"
-                        />
+        {/* Camps Table */}
+        <div>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="Camps Table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', width: '60px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
+                  <TableCell align="left" style={{ fontFamily: 'Prompt', width: '500px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ชื่อกิจกรรม</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ห้อง</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>วันที่</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '300px' }}>จำนวนคนต่อห้อง</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '200px' }}>จัดการ</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredCamps.map((camp, index) => (
+                  <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontSize: '15px' }} component="th" scope="row">{index + 1}</TableCell>
+                    <TableCell align="left" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.title}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.class === 609 ? '6/9' : camp.class === 509 ? '5/9' : '4/9'}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{formatDate(camp.date)}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.max}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>
+                      <div className="flex justify-center gap-2">
+                        {isSelected ? (
+                          <div className="flex items-center justify-center">
+                            <input type="checkbox" checked={selectedDelete.includes(camp.id)} onChange={() => handleCheck(camp.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a]" />
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => updateCampDataFocus(camp)}
+                              className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base font-[Prompt] bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer transition-all duration-300"
+                            >
+                              แก้ไข
+                            </button>
+                            <button onClick={() => handleDelete(camp.id)} className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                              ลบ
+                            </button>
+                          </>
+                        )}
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
-                      >
-                        ลบ
-                      </button>
-                    )
-                    }
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       </div>
-
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="cursor-pointer fixed bottom-6 right-6 hover:scale-110 transition-transform duration-300"
-      >
-        <FaCirclePlus size={80} color="#2a4365" />
-      </button>
 
       <AddModal
         isOpen={isModalOpen}

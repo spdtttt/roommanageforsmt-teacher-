@@ -19,19 +19,13 @@ async function CampData() {
 
 const RoomPage = () => {
   return (
-    <div className="mt-10">
-      <div className="mb-3" style={{
-        fontFamily: 'Mitr, sans-serif',
-        fontWeight: '500',
-        fontSize: '40px'
-      }}>ค่ายทั้งหมด</div>
-
-      <div style={{
-        width: '85%',
-        height: '1.5px',
-        backgroundColor: '#c7c7c7',
-        marginBottom: '30px'
-      }}></div>
+    <div className="w-full h-full flex flex-col">
+      <header className="py-5 bg-white border-b border-[#e1e7ef] flex items-center justify-between px-6 lg:px-8 w-full">
+        <div>
+          <h1 className="text-2xl font-bold text-black font-[Prompt]">รายการห้องพัก</h1>
+          <p className="text-sm font-[Prompt] text-gray-500">จัดการห้องพักของนักเรียนในแต่ละรายการค่าย</p>
+        </div>
+      </header>
 
       <Suspense fallback={
         <div className="flex justify-center mt-30">
