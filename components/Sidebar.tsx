@@ -16,7 +16,7 @@ const Sidebar = () => {
 
     return (
         <>
-            <nav className={`fixed md:static inset-y-0 left-0 z-50 shadow-md min-h-screen h-auto flex flex-col duration-500 w-20 lg:w-67 bg-[#0A2A65] text-white`} >
+            <nav className={`fixed inset-y-0 left-0 z-50 shadow-md min-h-screen h-auto flex flex-col duration-500 w-20 lg:w-67 bg-[#0A2A65] text-white`} >
                 {/* Header */}
                 <div className={`h-[93px] border-blue-900 flex items-center gap-4 justify-center lg:justify-start lg:px-7 border-b`}>
                     <div className="w-13 h-13 rounded-xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)]">

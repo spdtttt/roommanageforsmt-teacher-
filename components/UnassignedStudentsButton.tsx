@@ -18,7 +18,7 @@ const UnassignedStudentsButton = ({
     <div className='mb-6'>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex gap-3 items-center cursor-pointer px-4 font-bold py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors text-[20px] font-[Prompt]"
+        className="flex gap-3 items-center cursor-pointer px-4 font-bold py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-[20px] font-[Prompt]"
       >
         <MousePointerClick className='w-6 h-6' />
         ดูรายชื่อนักเรียนที่ยังไม่ได้ลงบันทึกห้องพัก

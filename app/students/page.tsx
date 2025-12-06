@@ -1,5 +1,7 @@
 import StudentList from "@/components/StudentList"
 import { prisma } from "@/prisma";
+import { Suspense } from "react";
+import { BeatLoader } from "react-spinners";
 
 export const revalidate = 0;
 
@@ -25,7 +27,13 @@ const StudentPage = async () => {
           <p className="text-sm font-[Prompt] text-gray-500">จัดการ/เพิ่ม/ลบ รายชื่อนักเรียน S.M.T. ในระบบ</p>
         </div>
       </header>
-      <StudentList Students={Students} />
+      <Suspense fallback={
+        <div className="flex justify-center mt-30">
+          <BeatLoader color="#5a5c7e" size={18} />
+        </div>
+      }>
+        <StudentList Students={Students} />
+      </Suspense>
     </div>
   )
 }

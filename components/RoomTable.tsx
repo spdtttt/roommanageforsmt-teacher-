@@ -121,37 +121,39 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
 
     return (
         <div>
-            <div className="flex justify-between mb-4 gap-4 items-center">
+            <div className="flex justify-between mb-4 items-center">
                 <div className='font-[Prompt] text-xl font-bold text-gray-500'>
                     นักเรียนที่บันทึกห้องพักแล้ว :
                 </div>
-                <div
-                    onClick={() => setIsSelected(!isSelected)}
-                    className="flex font-[Prompt] cursor-pointer text-white bg-yellow-500 hover:bg-yellow-600 p-2 sm:p-3 items-center rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 font-bold"
-                >
-                    <MousePointerClick className="w-5 h-5" />
-                    <span>{!isSelected ? 'เลือก' : 'ยกเลิก'}</span>
-                </div>
-                <div
-                    className={`${isSelected ? 'block' : 'hidden'} font-[Prompt] text-white bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
-                    onClick={handleSelectDeleted}
-                >
-                    <Trash className="w-5 h-5" />
-                    <span>ลบรายการที่เลือก</span>
-                </div>
-                <div className={`${isSelected ? 'block' : 'hidden'} flex items-center`}>
-                    <input
-                        type="checkbox"
-                        checked={rooms.length > 0 && selectedDelete.length === rooms.length}
-                        onChange={(e) => {
-                            if (e.target.checked) {
-                                setSelectedDelete(rooms.map((c: any) => c.id))
-                            } else {
-                                setSelectedDelete([])
-                            }
-                        }}
-                        className="w-[45px] h-[45px]"
-                    />
+                <div className='flex gap-4'>
+                    <div
+                        onClick={() => setIsSelected(!isSelected)}
+                        className="flex font-[Prompt] cursor-pointer text-white bg-yellow-500 hover:bg-yellow-600 p-2 sm:p-3 items-center rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 font-bold"
+                    >
+                        <MousePointerClick className="w-5 h-5" />
+                        <span>{!isSelected ? 'เลือก' : 'ยกเลิก'}</span>
+                    </div>
+                    <div
+                        className={`${isSelected ? 'block' : 'hidden'} font-[Prompt] text-white bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 cursor-pointer`}
+                        onClick={handleSelectDeleted}
+                    >
+                        <Trash className="w-5 h-5" />
+                        <span>ลบรายการที่เลือก</span>
+                    </div>
+                    <div className={`${isSelected ? 'block' : 'hidden'} flex items-center`}>
+                        <input
+                            type="checkbox"
+                            checked={rooms.length > 0 && selectedDelete.length === rooms.length}
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    setSelectedDelete(rooms.map((c: any) => c.id))
+                                } else {
+                                    setSelectedDelete([])
+                                }
+                            }}
+                            className="w-[45px] h-[45px] cursor-pointer"
+                        />
+                    </div>
                 </div>
             </div>
             <TableContainer component={Paper}>
@@ -175,7 +177,7 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
                                 <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>
                                     {isSelected ? (
                                         <div className="flex justify-center items-center">
-                                            <input type="checkbox" checked={selectedDelete.includes(room.id)} onChange={() => handleCheck(room.id)} className="w-[33px] h-[33px] bg-white border-2 rounded checked:bg-[#0e327a]" />
+                                            <input type="checkbox" checked={selectedDelete.includes(room.id)} onChange={() => handleCheck(room.id)} className="w-[33px] h-[33px] bg-white border-2 rounded checked:bg-[#0e327a] cursor-pointer" />
                                         </div>
                                     ) : (
                                         <div className="flex justify-center gap-2">

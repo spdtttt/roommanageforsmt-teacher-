@@ -395,7 +395,7 @@ const StudentList = ({ Students }: StudentListProps) => {
                                         setSelectedDelete([])
                                     }
                                 }}
-                                className="w-[48px] h-[48px]"
+                                className="w-[48px] h-[48px] cursor-pointer"
                             />
                         </div>
                     </div>
@@ -425,11 +425,12 @@ const StudentList = ({ Students }: StudentListProps) => {
                                             <div className="flex justify-center gap-2">
                                                 {isSelected ? (
                                                     <div className="flex items-center">
-                                                        <input type="checkbox" checked={selectedDelete.includes(student.id)} onChange={() => handleCheck(student.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a]" />
+                                                        <input type="checkbox" checked={selectedDelete.includes(student.id)} onChange={() => handleCheck(student.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a] cursor-pointer" />
                                                     </div>
                                                 ) : (
                                                     <>
-                                                        <button onClick={() => handleDelete(student.id)} className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                                                        <button onClick={() => handleDelete(student.id)} className="flex items-center gap-2 px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                                                            <Trash className="w-5 h-5" />
                                                             ลบ
                                                         </button>
                                                     </>

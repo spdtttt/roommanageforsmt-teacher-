@@ -1,9 +1,9 @@
 'use client'
-import { useState, useRef } from "react"
+import { useState } from "react"
 import Select from "react-select";
 import { useRouter } from "next/navigation";
 import StatCard from "./StatCard";
-import { CalendarDays, GraduationCap, Users, Filter, Plus, MousePointerClick, Trash } from "lucide-react";
+import { CalendarDays, GraduationCap, Users, Filter, Plus, MousePointerClick, Trash, SquarePen, Square } from "lucide-react";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -368,6 +368,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
 }
 
 const CampList = ({ Camps, Students = [] }: CampListProps) => {
+  const [loading, setLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [filterClass, setFilterClass] = useState('all');
@@ -581,7 +582,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                     setSelectedDelete([])
                   }
                 }}
-                className="w-[48px] h-[48px]"
+                className="w-[48px] h-[48px] cursor-pointer"
               />
             </div>
           </div>
@@ -613,17 +614,19 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       <div className="flex justify-center gap-2">
                         {isSelected ? (
                           <div className="flex items-center justify-center">
-                            <input type="checkbox" checked={selectedDelete.includes(camp.id)} onChange={() => handleCheck(camp.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a]" />
+                            <input type="checkbox" checked={selectedDelete.includes(camp.id)} onChange={() => handleCheck(camp.id)} className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a] cursor-pointer" />
                           </div>
                         ) : (
                           <>
                             <button
                               onClick={() => updateCampDataFocus(camp)}
-                              className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base font-[Prompt] bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer transition-all duration-300"
+                              className="items-center flex gap-2 px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base font-[Prompt] bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer transition-all duration-300"
                             >
+                              <SquarePen className="w-5 h-5" />
                               แก้ไข
                             </button>
-                            <button onClick={() => handleDelete(camp.id)} className="px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                            <button onClick={() => handleDelete(camp.id)} className="flex items-center gap-2 px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300">
+                              <Trash className="w-5 h-5" />
                               ลบ
                             </button>
                           </>

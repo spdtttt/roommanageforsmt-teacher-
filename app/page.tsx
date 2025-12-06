@@ -1,5 +1,7 @@
 import CampList from "@/components/CampList"
 import { prisma } from "@/prisma";
+import { Suspense } from "react";
+import { BeatLoader } from "react-spinners";
 
 export const revalidate = 0;
 
@@ -30,7 +32,14 @@ const CampPage = async () => {
           <p className="text-sm font-[Prompt] text-gray-500">จัดการกิจกรรมและค่ายต่างๆ ของห้องเรียน S.M.T โรงเรียนเมืองสุราษฎร์ธานี</p>
         </div>
       </header>
-      <CampList Camps={Camps} Students={allMemberIds} />
+      
+      <Suspense fallback={
+        <div className="flex justify-center mt-30">
+          <BeatLoader color="#5a5c7e" size={18} />
+        </div>
+      }>
+        <CampList Camps={Camps} Students={allMemberIds} />
+      </Suspense>
     </div>
   )
 }
