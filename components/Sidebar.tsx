@@ -37,7 +37,7 @@ const Sidebar = () => {
                                 const Icon = item.icon;
                                 const isActive = pathname === `/${item.details}` || (item.details === '' && pathname === '/');
                                 return (
-                                    <Link href={`/${item.details}`} key={index} className={`${isActive && 'bg-[#3c83f5] text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]'} text-[#b5c0d1] w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 hover:bg-[#0e327a] hover:text-white`}>
+                                    <Link href={`/${item.details}`} key={index} className={`${isActive && 'bg-[#3c83f5] text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]'} hover:shadow-none text-[#b5c0d1] w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 hover:bg-[#0e327a] hover:text-white`}>
                                         <Icon className="w-5 h-5 flex-shrink-0" />
                                         <span style={{
                                             fontFamily: 'Prompt'

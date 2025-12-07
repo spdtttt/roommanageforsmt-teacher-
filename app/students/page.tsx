@@ -28,7 +28,7 @@ const StudentPage = async () => {
         </div>
       </header>
       <Suspense fallback={
-        <div className="flex justify-center mt-30">
+        <div className="flex justify-center items-center py-20">
           <BeatLoader color="#5a5c7e" size={18} />
         </div>
       }>

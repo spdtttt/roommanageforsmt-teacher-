@@ -27,6 +27,15 @@ export default function ProtectedLayout({
     }
   }, [user, loading, isLoginPage, router])
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center mt-30">
+        <BeatLoader color="#5a5c7e" size={18} />
+      </div>
+    )
+  }
+
   // If on login page, don't show sidebar and use full screen layout
   if (isLoginPage) {
     return (

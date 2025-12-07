@@ -74,7 +74,7 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }> })
             <div className="p-6 lg:p-8">
                 <UnassignedStudentsButton campId={camp_idNum} campInfo={campInfo} />
                 <Suspense fallback={
-                    <div className="flex justify-center mt-30">
+                    <div className="flex justify-center items-center py-20">
                         <BeatLoader color="#5a5c7e" size={18} />
                     </div>
                 }>
