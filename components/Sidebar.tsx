@@ -3,7 +3,8 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import logo from '@/public/smt_logo.jpg'
 import Link from "next/link"
-import { LayoutDashboard, Users, School } from 'lucide-react'
+import { LayoutDashboard, Users, School, LogOut } from 'lucide-react'
+import { useAuth } from './AuthProvider'
 
 const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'แดชบอร์ด', details: '' },
@@ -13,6 +14,7 @@ const menuItems = [
 
 const Sidebar = () => {
     const pathname = usePathname();
+    const { signOut, user } = useAuth();
 
     return (
         <>
@@ -35,7 +37,7 @@ const Sidebar = () => {
                                 const Icon = item.icon;
                                 const isActive = pathname === `/${item.details}` || (item.details === '' && pathname === '/');
                                 return (
-                                    <Link href={`/${item.details}`} key={index} className={`${isActive && 'bg-[#3c83f5] text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]'} text-[#b5c0d1] w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 hover:bg-[#0e327a] hover:text-white hover:shadow-lg`}>
+                                    <Link href={`/${item.details}`} key={index} className={`${isActive && 'bg-[#3c83f5] text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]'} text-[#b5c0d1] w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 hover:bg-[#0e327a] hover:text-white`}>
                                         <Icon className="w-5 h-5 flex-shrink-0" />
                                         <span style={{
                                             fontFamily: 'Prompt'
@@ -49,15 +51,24 @@ const Sidebar = () => {
 
                 {/* Footer */}
                 <div className="p-4 border-t border-[#154b8c] font-[Prompt]">
-                    <div className="flex items-center gap-4 px-2">
+                    <div className="flex items-center gap-4 px-2 mb-3">
                         <div className="w-10 h-10 rounded-full bg-[#154b8c] flex items-center justify-center">
                             <span className="text-sm font-semibold text-sidebar-foreground">ครู</span>
                         </div>
                         <div className="hidden lg:block flex-1">
-                            <p className="text-sm font-medium text-sidebar-foreground">คุณครู</p>
+                            <p className="text-sm font-medium text-sidebar-foreground">
+                                {user?.email?.split('@')[0] || 'คุณครู'}
+                            </p>
                             <p className="text-xs text-sidebar-foreground/60">ผู้ดูแลระบบ</p>
                         </div>
                     </div>
+                    <button
+                        onClick={signOut}
+                        className="cursor-pointer w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-[#0e327a] text-[#b5c0d1] hover:text-white"
+                    >
+                        <LogOut className="w-5 h-5 flex-shrink-0" />
+                        <span className="hidden lg:block font-medium">ออกจากระบบ</span>
+                    </button>
                 </div>
             </nav>
         </>
