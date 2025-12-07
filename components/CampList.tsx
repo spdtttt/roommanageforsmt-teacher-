@@ -594,11 +594,11 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
             <Table sx={{ minWidth: 650 }} aria-label="Camps Table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center" style={{ fontFamily: 'Prompt', width: '60px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
-                  <TableCell align="left" style={{ fontFamily: 'Prompt', width: '500px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ชื่อกิจกรรม</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
+                  <TableCell align="left" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ชื่อกิจกรรม</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ห้อง</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>วันที่</TableCell>
-                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '300px' }}>จำนวนคนต่อห้อง</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>จำนวนคนต่อห้อง</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '200px' }}>จัดการ</TableCell>
                 </TableRow>
               </TableHead>

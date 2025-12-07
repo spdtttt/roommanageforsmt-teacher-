@@ -407,11 +407,11 @@ const StudentList = ({ Students }: StudentListProps) => {
                         <Table sx={{ minWidth: 650 }} aria-label="Students Table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center" style={{ fontFamily: 'Prompt', width: '60px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
-                                    <TableCell align="center" style={{ fontFamily: 'Prompt', width: '170px', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>รหัสนักเรียน</TableCell>
-                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '700px' }}>ชื่อ</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>รหัสนักเรียน</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ชื่อ</TableCell>
                                     <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ห้อง</TableCell>
-                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '300px' }}>จัดการ</TableCell>
+                                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '200px' }}>จัดการ</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

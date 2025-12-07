@@ -1,5 +1,4 @@
 'use client'
-
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -57,4 +56,3 @@ export function useAuth() {
   }
   return context
 }
-
