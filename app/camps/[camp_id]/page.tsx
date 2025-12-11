@@ -23,7 +23,7 @@ async function RoomData({
         }
 
     })
-    const rooms = dbRooms.map(r => ({
+    const rooms = dbRooms.map((r: { id: any; member_ids: any; camp_id: any; }) => ({
         id: r.id,
         member_ids: r.member_ids,
         camp_id: r.camp_id ?? camp_id,
@@ -53,7 +53,7 @@ const CampDetails = async ({ params }: { params: Promise<{ camp_id: string }> })
                 }
             })
 
-            assignedStudents = response.flatMap(r => r.member_ids);
+            assignedStudents = response.flatMap((r: { member_ids: any; }) => r.member_ids);
             console.log("Assigned Students:", assignedStudents)
         } catch(err) {
             console.error('Error from getMembers')

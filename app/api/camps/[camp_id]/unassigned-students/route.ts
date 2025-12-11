@@ -40,9 +40,10 @@ export async function GET(
       where: {
         class: camp.class ?? undefined,
       },
-      orderBy: {
-        student_id: "asc",
-      },
+      orderBy: [
+        { gender: 'desc' },
+        { student_id: 'asc' },
+      ]
     });
 
     // กรองเฉพาะนักเรียนที่ยังไม่ได้ลงบันทึกห้องพัก

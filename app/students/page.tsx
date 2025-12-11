@@ -7,9 +7,11 @@ export const revalidate = 0;
 
 const StudentPage = async () => {
   const dbStudents = await prisma.student.findMany({
-    orderBy: {
-      class: 'asc'
-    }
+    orderBy: [
+      { class: 'asc' },
+      { gender: 'desc' },
+      { student_id: 'asc' },
+    ]
   });
   const Students = dbStudents.map(s => ({
     id: s.id,
