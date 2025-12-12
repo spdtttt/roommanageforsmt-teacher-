@@ -11,6 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { BeatLoader } from "react-spinners";
 
 interface Camp {
   id: number;
@@ -92,6 +93,8 @@ interface EditModalProps {
 const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModalProps) => {
   if (!isOpen) return null;
 
+  const [loading, setLoading] = useState(false);
+
   const today = new Date();
   const year = today.getFullYear();
   const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -100,7 +103,15 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(e);
+    setLoading(true);
+
+    try {
+      onSubmit(e);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -198,6 +209,7 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
           {/* Footer */}
           <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
+              disabled={loading}
               type="button"
               onClick={onClose}
               className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
@@ -205,10 +217,11 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
               ยกเลิก
             </button>
             <button
+              disabled={loading}
               type="submit"
-              className="flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
+              className={`${loading ? 'bg-blue-500' : 'bg-[#0e327a]'} flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
             >
-              บันทึก
+              {loading ? 'กำลังบันทึก...' : 'บันทึก'}
             </button>
           </div>
         </form>
@@ -217,14 +230,17 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
   )
 }
 
+// หน้าต่างแก้ไขข้อมูลค่าย
 const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModalProps) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   if (!isEditModalOpen) return null;
   const ISODate = campData.date;
   const DateforInput = ISODate.split('T')[0];
 
   const handleSave = async (e: React.FormEvent) => {
+    setLoading(true);
     try {
       e.preventDefault();
 
@@ -246,11 +262,12 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
       }
 
       onClose();
-      window.location.reload();
     } catch (err) {
       console.error('Error editing details:', err);
     } finally {
-      router.push('/')
+      setLoading(false);
+      window.location.reload();
+      router.push('/');
     }
   }
 
@@ -348,6 +365,7 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
           {/* Footer */}
           <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
+              disabled={loading}
               type="button"
               onClick={onClose}
               className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
@@ -355,10 +373,11 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
               ยกเลิก
             </button>
             <button
+              disabled={loading}
               type="submit"
-              className="flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
+              className={`${loading ? 'bg-blue-500' : 'bg-[#0e327a]'} flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
             >
-              บันทึก
+              {loading ? 'กำลังบันทึก...' : 'บันทึก'}
             </button>
           </div>
         </form>
@@ -396,6 +415,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
   };
 
   const handleSelectDeleted = async () => {
+    setLoading(true);
     try {
       if (selectedDelete.length === 0) return;
 
@@ -413,14 +433,14 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       if (!resp.ok) {
         throw new Error('Failed to delete selected camps')
       }
-
-      window.location.reload()
     } catch (err) {
       console.error('Error deleting selected camps:', err)
       alert('เกิดข้อผิดพลาดในการลบข้อมูล')
     } finally {
+      setLoading(false);
       setIsSelected(false);
       setSelectedDelete([]);
+      window.location.reload()
     }
   }
 
@@ -478,6 +498,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
 
   async function handleDelete(camp_id: number) {
     if (!confirm("ต้องการลบค่ายนี้จริงหรือไม่")) return;
+    setLoading(true);
 
     try {
       const response = await fetch(`/api/camps/${camp_id}`, {
@@ -490,11 +511,12 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
 
       const result = await response.json();
       console.log(result.message);
-
-      window.location.reload();
     } catch (err) {
       console.error("Error deleting camp:", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+    } finally {
+      setLoading(false);
+      window.location.reload();
     }
   }
 
@@ -512,6 +534,14 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
   const filteredCamps = filterClass === 'all'
     ? Camps
     : Camps.filter(camp => camp.class === Number(filterClass));
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <BeatLoader color="#5a5c7e" size={18} />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -557,20 +587,22 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
               <Plus className="w-4 h-4" />
               <span>เพิ่มกิจกรรมใหม่</span>
             </div>
-            <div
+            <button
               onClick={() => setIsSelected(!isSelected)}
+              disabled={loading}
               className="flex bg-yellow-500 hover:bg-yellow-600 p-2 sm:p-3 items-center rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 font-bold"
             >
               <MousePointerClick className="w-4 h-4" />
               <span>{!isSelected ? 'เลือก' : 'ยกเลิก'}</span>
-            </div>
-            <div
+            </button>
+            <button
+              disabled={loading}
               className={`${isSelected ? 'block' : 'hidden'} bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
               onClick={handleSelectDeleted}
             >
               <Trash className="w-4 h-4" />
               <span>ลบรายการที่เลือก</span>
-            </div>
+            </button>
             <div className={`${isSelected ? 'block' : 'hidden'} flex items-center`}>
               <input
                 type="checkbox"

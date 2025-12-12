@@ -23,7 +23,7 @@ interface Student {
 
 const RoomTable = ({ rooms }: { rooms: Room[] }) => {
     const [idToName, setIdToName] = useState<Record<number, string>>({})
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [isSelected, setIsSelected] = useState(false)
     const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
 
@@ -61,6 +61,7 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
     };
 
     const handleSelectDeleted = async () => {
+        setLoading(true);
         try {
             if (selectedDelete.length === 0) return;
 
@@ -78,19 +79,20 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
             if (!resp.ok) {
                 throw new Error('Failed to delete selected rooms')
             }
-
-            window.location.reload()
         } catch (err) {
             console.error('Error deleting rooms camps:', err)
             alert('เกิดข้อผิดพลาดในการลบข้อมูล')
         } finally {
+            setLoading(false)
             setIsSelected(false);
             setSelectedDelete([]);
+            window.location.reload()
         }
     }
 
     const handleDelete = async (id: number) => {
         if (!confirm('ต้องการลบห้องนี้จริงๆหรือไม่')) return
+        setLoading(true);
 
         try {
             const response = await fetch(`/api/room/delete/${id}`, {
@@ -103,11 +105,12 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
 
             const result = await response.json()
             console.log(result.message)
-
-            window.location.reload();
         } catch (err) {
             console.error("Error deleting room:", err);
             alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+        } finally {
+            setLoading(false);
+            window.location.reload()
         }
     }
 
