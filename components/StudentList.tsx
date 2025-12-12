@@ -281,6 +281,7 @@ const StudentList = ({ Students }: StudentListProps) => {
       setLoading(false);
       setIsSelected(false);
       setSelectedDelete([]);
+      window.location.reload();
     }
   };
 
