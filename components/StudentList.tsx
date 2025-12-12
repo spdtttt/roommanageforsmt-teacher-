@@ -216,7 +216,9 @@ const AddModal = ({
             <button
               disabled={loading}
               type="submit"
-              className={`${loading ? 'bg-blue-500' : 'bg-[#0e327a]'} flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
+              className={`${
+                loading ? "bg-blue-500" : "bg-[#0e327a]"
+              } flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
             >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </button>
@@ -284,6 +286,7 @@ const StudentList = ({ Students }: StudentListProps) => {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setLoading(true);
 
     if (
       !formData.student_id ||
@@ -335,6 +338,7 @@ const StudentList = ({ Students }: StudentListProps) => {
     } catch (err) {
       console.error("Error fetch API Add Student: ", err);
     } finally {
+      setLoading(false);
       onClose();
       window.location.reload();
     }
