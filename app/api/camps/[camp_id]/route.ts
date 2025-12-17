@@ -32,6 +32,12 @@ export async function DELETE(req: Request, context: { params: Promise<{ camp_id:
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
+    await prisma.room.deleteMany({
+      where: {
+        camp_id: id
+      }
+    })
+
     await prisma.camp.delete({
       where: { id: id }
     });

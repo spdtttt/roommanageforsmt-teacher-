@@ -1,23 +1,31 @@
-import { prisma } from '@/prisma'
-import { NextResponse } from 'next/server'
+import { prisma } from "@/prisma";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    try {
-        const body = await req.json();
-        const { ids } = body
-        const idNums = ids.map((id: any) => parseInt(id, 10))
+  try {
+    const body = await req.json();
+    const { ids } = body;
+    const idNums = ids.map((id: any) => parseInt(id, 10));
 
-        await prisma.camp.deleteMany({
-            where: {
-                id: {
-                    in: idNums
-                }
-            }
-        })
+    await prisma.room.deleteMany({
+      where: {
+        camp_id: {
+          in: idNums,
+        },
+      },
+    });
 
-        return NextResponse.json({ success: true })
-    } catch(err) {
-        console.error('Error from API Deleting Multiple:', err)
-        return
-    }
+    await prisma.camp.deleteMany({
+      where: {
+        id: {
+          in: idNums,
+        },
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error from API Deleting Multiple:", err);
+    return;
+  }
 }
