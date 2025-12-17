@@ -11,7 +11,8 @@ async function CampData() {
     id: c.id,
     title: c.title ?? '',
     class: c.class ?? 0,
-    date: (c.date ?? new Date()).toISOString(),
+    dateStart: c.dateStart?.toISOString() ?? new Date().toISOString(),
+    dateEnd: c.dateEnd?.toISOString() ?? new Date().toISOString(),
     max: c.max ?? 0,
   }));
   return <CampShow camps={camps} />
