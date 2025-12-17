@@ -11,7 +11,8 @@ const CampPage = async () => {
     id: c.id,
     title: c.title ?? '',
     class: c.class ?? 0,
-    date: (c.date ?? new Date()).toISOString(),
+    dateStart: (c.dateStart ?? new Date()).toISOString(),
+    dateEnd: (c.dateEnd ?? new Date()).toISOString(),
     max: c.max ?? 0,
   }));
 
@@ -32,7 +33,7 @@ const CampPage = async () => {
           <p className="text-sm font-[Prompt] text-gray-500">จัดการกิจกรรมและค่ายต่างๆ ของห้องเรียน S.M.T โรงเรียนเมืองสุราษฎร์ธานี</p>
         </div>
       </header>
-      
+
       <Suspense fallback={
         <div className="flex justify-center items-center py-20">
           <BeatLoader color="#5a5c7e" size={18} />

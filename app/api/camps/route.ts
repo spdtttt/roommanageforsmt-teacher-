@@ -14,9 +14,9 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { title, classroom, date, max } = body;
+        const { title, classroom, dateStart, dateEnd, max } = body;
 
-        if (!title || !classroom || !date || !max) {
+        if (!title || !classroom || !dateStart || !dateEnd || !max) {
             return NextResponse.json({ error: 'Missing or invalid data' }, { status: 400 })
         }
 
@@ -24,7 +24,8 @@ export async function POST(req: Request) {
             data: {
                 title: title,
                 class: classroom,
-                date: date,
+                dateStart: new Date(dateStart),
+                dateEnd: new Date(dateEnd),
                 max: max
             }
         })
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
         revalidatePath('/rooms')
 
         return NextResponse.json({ message: 'Camp created successfully', newCamp });
-    } catch(err) {
+    } catch (err) {
         console.error('Error From API Camp Add: ', err)
         return
     }

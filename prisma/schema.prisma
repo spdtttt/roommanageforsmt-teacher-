@@ -1,44 +1,35 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Student {
-  id      Int     @id @default(autoincrement())
-  student_id      Int     @unique
-  name    String?
-  gender  String?
-  class   Int?
+  id          Int     @id @default(autoincrement())
+  student_id  Int     @unique
+  name        String?
+  gender      String?
+  class       Int?
+  national_id String?
 }
 
 model Room {
-  id      Int     @id @default(autoincrement())
-  member_ids  Int[]
-  camp_id     Int?
-  camp        Camp?        @relation(fields: [camp_id], references: [id])
+  id         Int   @id @default(autoincrement())
+  member_ids Int[]
+  camp_id    Int?
+  camp       Camp? @relation(fields: [camp_id], references: [id])
 }
 
 model Camp {
-  id      Int       @id @default(autoincrement())
-  title   String?
-  class   Int?
-  date    DateTime?
-  max     Int?
-  rooms   Room[]
-}
-
-model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  password String
+  id        Int       @id @default(autoincrement())
+  title     String?
+  class     Int?
+  dateStart DateTime? @db.Date
+  max       Int?
+  dateEnd   DateTime? @db.Date
+  rooms     Room[]
 }

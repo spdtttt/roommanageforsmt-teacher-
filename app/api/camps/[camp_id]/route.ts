@@ -45,35 +45,36 @@ export async function DELETE(req: Request, context: { params: Promise<{ camp_id:
 
 
 export async function PUT(
-    request: NextRequest,
-    context: { params: Promise<{ camp_id: string }> }
+  request: NextRequest,
+  context: { params: Promise<{ camp_id: string }> }
 ) {
-    try {
-        const body = await request.json();
-        const { title, class: classroom, date, max } = body;
-        
-        const { camp_id } = await context.params;
-        const id = parseInt(camp_id, 10);
+  try {
+    const body = await request.json();
+    const { title, class: classroom, dateStart, dateEnd, max } = body;
 
-        const updatedCamp = await prisma.camp.update({
-            where: { id }, 
-            data: {
-                title,
-                class: classroom,
-                date: date,
-                max
-            }
-        });
+    const { camp_id } = await context.params;
+    const id = parseInt(camp_id, 10);
 
-        return NextResponse.json({
-            success: true,
-            data: updatedCamp
-        })
-    } catch(err) {
-        console.error('Error Update Data:', err);
-        return NextResponse.json(
-            { error: 'ไม่สามารถอัพเดทได้' },
-            { status: 500 }
-        )
-    }
+    const updatedCamp = await prisma.camp.update({
+      where: { id },
+      data: {
+        title,
+        class: classroom,
+        dateStart: new Date(dateStart),
+        dateEnd: new Date(dateEnd),
+        max
+      }
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: updatedCamp
+    })
+  } catch (err) {
+    console.error('Error Update Data:', err);
+    return NextResponse.json(
+      { error: 'ไม่สามารถอัพเดทได้' },
+      { status: 500 }
+    )
+  }
 }

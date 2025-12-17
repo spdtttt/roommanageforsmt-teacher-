@@ -17,7 +17,8 @@ interface Camp {
   id: number;
   title: string;
   class: number;
-  date: string;
+  dateStart: string;
+  dateEnd: string;
   max: number;
 }
 
@@ -59,13 +60,15 @@ interface AddModalProps {
   formData: {
     title: string;
     class: any;
-    date: string;
+    dateStart: string;
+    dateEnd: string;
     max: number;
   };
   setFormData: React.Dispatch<React.SetStateAction<{
     title: string;
     class: any;
-    date: string;
+    dateStart: string;
+    dateEnd: string;
     max: number;
   }>>;
   onSubmit: (e: React.FormEvent) => void;
@@ -78,14 +81,16 @@ interface EditModalProps {
     id: number;
     title: string;
     class: number | null;
-    date: string;
+    dateStart: string;
+    dateEnd: string;
     max: number;
   }
   setCampData: React.Dispatch<React.SetStateAction<{
     id: number;
     title: string;
     class: number | null;
-    date: string;
+    dateStart: string;
+    dateEnd: string;
     max: number;
   }>>;
 }
@@ -176,14 +181,29 @@ const AddModal = ({ isOpen, onClose, formData, setFormData, onSubmit }: AddModal
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่เริ่มต้น</label>
             <input
               type="date"
               name="date"
               min={formattedDate}
-              value={formData.date}
+              value={formData.dateStart}
               onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
+                setFormData({ ...formData, dateStart: e.target.value })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่สิ้นสุด</label>
+            <input
+              type="date"
+              name="date"
+              min={formattedDate}
+              value={formData.dateEnd}
+              onChange={(e) =>
+                setFormData({ ...formData, dateEnd: e.target.value })
               }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
@@ -236,8 +256,6 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
   const [loading, setLoading] = useState(false);
 
   if (!isEditModalOpen) return null;
-  const ISODate = campData.date;
-  const DateforInput = ISODate.split('T')[0];
 
   const handleSave = async (e: React.FormEvent) => {
     setLoading(true);
@@ -252,7 +270,8 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
         body: JSON.stringify({
           title: campData.title,
           class: campData.class,
-          date: DateforInput + 'T00:00:00Z',
+          dateStart: campData.dateStart,
+          dateEnd: campData.dateEnd,
           max: campData.max
         })
       });
@@ -333,13 +352,27 @@ const EditModal = ({ isEditModalOpen, onClose, campData, setCampData }: EditModa
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่</label>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่เริ่มต้น</label>
             <input
               type="date"
               name="date"
-              value={DateforInput}
+              value={campData.dateStart}
               onChange={(e) =>
-                setCampData({ ...campData, date: e.target.value })
+                setCampData({ ...campData, dateStart: e.target.value })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">วันที่สิ้นสุด</label>
+            <input
+              type="date"
+              name="date"
+              value={campData.dateEnd}
+              onChange={(e) =>
+                setCampData({ ...campData, dateEnd: e.target.value })
               }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
@@ -394,14 +427,16 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
   const [formData, setFormData] = useState({
     title: '',
     class: Number(''),
-    date: '',
+    dateStart: '',
+    dateEnd: '',
     max: Number('')
   })
   const [campData, setCampData] = useState({
     id: Number(''),
     title: '',
     class: null as number | null,
-    date: '',
+    dateStart: '',
+    dateEnd: '',
     max: Number('')
   })
   const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
@@ -450,14 +485,16 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
     setFormData({
       title: '',
       class: Number(''),
-      date: '',
+      dateStart: '',
+      dateEnd: '',
       max: Number(''),
     })
     setCampData({
       id: Number(''),
       title: '',
       class: Number(''),
-      date: '',
+      dateStart: '',
+      dateEnd: '',
       max: Number('')
     })
   }
@@ -469,7 +506,8 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       const dataToSend = {
         title: formData.title,
         classroom: formData.class,
-        date: formData.date + 'T00:00:00Z',
+        dateStart: formData.dateStart,
+        dateEnd: formData.dateEnd,
         max: formData.max
       }
 
@@ -521,11 +559,21 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
   }
 
   const updateCampDataFocus = async (camp: any) => {
+    // Convert ISO string to YYYY-MM-DD format for date input
+    const formatDateForInput = (isoString: string) => {
+      const date = new Date(isoString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     setCampData({
       id: camp.id,
       title: camp.title,
       class: camp.class,
-      date: camp.date,
+      dateStart: formatDateForInput(camp.dateStart),
+      dateEnd: formatDateForInput(camp.dateEnd),
       max: camp.max
     })
     setIsEditModalOpen(true);
@@ -629,7 +677,8 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ที่</TableCell>
                   <TableCell align="left" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ชื่อกิจกรรม</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>ห้อง</TableCell>
-                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>วันที่</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>วันที่เริ่มต้น</TableCell>
+                  <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>วันที่สิ้นสุด</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px' }}>จำนวนคนต่อห้อง</TableCell>
                   <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontWeight: 'bold', fontSize: '17px', width: '200px' }}>จัดการ</TableCell>
                 </TableRow>
@@ -640,7 +689,8 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                     <TableCell align="center" style={{ fontFamily: 'Prompt', color: '#65758b', fontSize: '15px' }} component="th" scope="row">{index + 1}</TableCell>
                     <TableCell align="left" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.title}</TableCell>
                     <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.class === 609 ? '6/9' : camp.class === 509 ? '5/9' : '4/9'}</TableCell>
-                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{formatDate(camp.date)}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{formatDate(camp.dateStart)}</TableCell>
+                    <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{formatDate(camp.dateEnd)}</TableCell>
                     <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>{camp.max}</TableCell>
                     <TableCell align="center" style={{ fontFamily: 'Prompt', color: 'black', fontSize: '15px' }}>
                       <div className="flex justify-center gap-2">
