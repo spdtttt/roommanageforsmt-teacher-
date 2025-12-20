@@ -8,13 +8,6 @@ import StatsCamp from "@/components/StatsCamp";
 
 export const revalidate = 0;
 
-type CampMember = {
-  id: number;
-  member_ids: number[];
-  camp_id: number | null;
-  note: string | null;
-};
-
 async function RoomData({
     params,
 }: {
@@ -30,7 +23,7 @@ async function RoomData({
         }
 
     })
-    const rooms = dbRooms.map((r: CampMember) => ({
+    const rooms = dbRooms.map((r) => ({
         id: r.id,
         member_ids: r.member_ids,
         camp_id: r.camp_id ?? camp_id,
