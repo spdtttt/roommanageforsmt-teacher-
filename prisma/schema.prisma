@@ -18,10 +18,11 @@ model Student {
 }
 
 model Room {
-  id         Int   @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   member_ids Int[]
   camp_id    Int?
-  camp       Camp? @relation(fields: [camp_id], references: [id])
+  note       String?
+  camp       Camp?   @relation(fields: [camp_id], references: [id])
 }
 
 model Camp {
@@ -29,7 +30,7 @@ model Camp {
   title     String?
   class     Int?
   dateStart DateTime? @db.Date
-  dateEnd   DateTime? @db.Date
   max       Int?
+  dateEnd   DateTime? @db.Date
   rooms     Room[]
 }
