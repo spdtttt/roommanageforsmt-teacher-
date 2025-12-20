@@ -14,7 +14,7 @@ model Student {
   name        String?
   gender      String?
   class       Int?
-  national_id String?
+  national_id String? @unique
 }
 
 model Room {
