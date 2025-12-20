@@ -10,15 +10,16 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { student_id, name, gender, classroom } = body;
+        const { student_id, national_id, name, gender, classroom } = body;
 
-        if (!student_id || !name || !gender || !classroom) {
+        if (!student_id || !national_id || !name || !gender || !classroom) {
             return NextResponse.json({ error: 'Missing or invalid data' }, { status: 400 })
         }
 
         const newCamp = await prisma.student.create({
             data: {
                 student_id: student_id,
+                national_id: national_id,
                 name: name,
                 gender: gender,
                 class: classroom

@@ -12,7 +12,7 @@ type CampMember = {
   id: number;
   member_ids: number[];
   camp_id: number | null;
-  note?: string;
+  note: string | null;
 };
 
 async function RoomData({

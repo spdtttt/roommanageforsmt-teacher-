@@ -16,6 +16,7 @@ const StudentPage = async () => {
   const Students = dbStudents.map(s => ({
     id: s.id,
     student_id: s.student_id,
+    national_id: s.national_id ?? '',
     name: s.name ?? '',
     gender: s.gender ?? '',
     class: s.class ?? 0,

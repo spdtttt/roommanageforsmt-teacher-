@@ -14,7 +14,7 @@ interface Room {
   id: number;
   member_ids: number[];
   camp_id: number;
-  note?: string;
+  note: string | null;
 }
 
 interface Student {

@@ -8,7 +8,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Select from "react-select";
-import { Users, Filter, Plus, Trash, MousePointerClick, Upload } from "lucide-react";
+import {
+  Users,
+  Filter,
+  Plus,
+  Trash,
+  MousePointerClick,
+  Upload,
+} from "lucide-react";
 import StatCard from "./StatCard";
 import { BeatLoader } from "react-spinners";
 import CSVUploadModal from "./CSVUploadModal";
@@ -16,6 +23,7 @@ import CSVUploadModal from "./CSVUploadModal";
 type Student = {
   id: number;
   student_id: number;
+  national_id: string;
   name: string;
   gender: string;
   class: number;
@@ -30,6 +38,7 @@ interface AddModalProps {
   onClose: () => void;
   formData: {
     student_id: string;
+    national_id: string;
     name: string;
     gender: string;
     class: number;
@@ -37,6 +46,7 @@ interface AddModalProps {
   setFormData: React.Dispatch<
     React.SetStateAction<{
       student_id: string;
+      national_id: string;
       name: string;
       gender: string;
       class: number;
@@ -110,9 +120,10 @@ const AddModal = ({
         <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
-              รหัสนักเรียน
+              เลขประจำตัวนักเรียน
             </label>
             <input
+              autoComplete="off"
               type="text"
               name="studentID"
               value={formData.student_id || ""}
@@ -120,7 +131,28 @@ const AddModal = ({
                 setFormData({ ...formData, student_id: e.target.value })
               }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900 placeholder-gray-400"
-              placeholder="กรอกรหัสนักเรียน"
+              placeholder="กรอกเลขประจำตัวนักเรียน 5 หลัก"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">
+              เลขประจำตัวประชาชน
+            </label>
+            <input
+              autoComplete="off"
+              type="text"
+              name="nationalID"
+              value={formData.national_id || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  national_id: e.target.value,
+                })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900 placeholder-gray-400"
+              placeholder="กรอกเลขประจำตัวประชาชน 13 หลัก"
               required
             />
           </div>
@@ -130,6 +162,7 @@ const AddModal = ({
               ชื่อ
             </label>
             <input
+              autoComplete="off"
               type="text"
               name="name"
               value={formData.name}
@@ -215,7 +248,13 @@ const AddModal = ({
               ยกเลิก
             </button>
             <button
-              disabled={loading || !formData.student_id || !formData.name || !formData.class || !formData.gender}
+              disabled={
+                loading ||
+                !formData.student_id ||
+                !formData.name ||
+                !formData.class ||
+                !formData.gender
+              }
               type="submit"
               className={`${
                 loading ? "bg-blue-500" : "bg-[#0e327a]"
@@ -236,6 +275,7 @@ const StudentList = ({ Students }: StudentListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     student_id: "",
+    national_id: "",
     name: "",
     gender: "",
     class: Number(""),
@@ -248,6 +288,7 @@ const StudentList = ({ Students }: StudentListProps) => {
     setIsModalOpen(false);
     setFormData({
       student_id: "",
+      national_id: "",
       name: "",
       gender: "",
       class: Number(""),
@@ -293,6 +334,7 @@ const StudentList = ({ Students }: StudentListProps) => {
 
     if (
       !formData.student_id ||
+      !formData.national_id ||
       !formData.name ||
       !formData.gender ||
       !formData.class
@@ -306,10 +348,15 @@ const StudentList = ({ Students }: StudentListProps) => {
       return;
     }
 
+    if (isNaN(Number(formData.national_id))) {
+      alert("เลขประจำตัวประชาชนต้องเป็นตัวเลข");
+      return;
+    }
+
     const exists = Students.some(
       (s) =>
-        (s.name === formData.name && s.class === formData.class) ||
-        s.student_id === Number(formData.student_id)
+        s.student_id === Number(formData.student_id) ||
+        s.national_id === formData.national_id
     );
     if (exists) {
       alert("มีข้อมูลนี้ในระบบแล้ว");
@@ -318,6 +365,7 @@ const StudentList = ({ Students }: StudentListProps) => {
 
     const dataToSend = {
       student_id: Number(formData.student_id),
+      national_id: Number(formData.national_id),
       name: formData.name,
       gender: formData.gender,
       classroom: formData.class,
@@ -438,9 +486,12 @@ const StudentList = ({ Students }: StudentListProps) => {
                 defaultValue={optionsforSelect[0]}
               />
             </div>
-            <button onClick={() => setCSVUploadModal(true)} className="transition-colors duration-300 hover:bg-green-600 flex font-[Prompt] cursor-pointer items-center gap-2 font-semibold text-white bg-green-500 px-4 py-2 rounded-lg">
-                <Upload className="w-4 h-4" />
-                <span>อัปโหลดไฟล์ผ่านไฟล์ CSV</span>
+            <button
+              onClick={() => setCSVUploadModal(true)}
+              className="transition-colors duration-300 hover:bg-green-600 flex font-[Prompt] cursor-pointer items-center gap-2 font-semibold text-white bg-green-500 px-4 py-2 rounded-lg"
+            >
+              <Upload className="w-4 h-4" />
+              <span>อัปโหลดไฟล์ผ่านไฟล์ CSV</span>
             </button>
           </div>
           <div className="gap-4 text-white cursor-pointer font-[Prompt] flex">
@@ -449,7 +500,7 @@ const StudentList = ({ Students }: StudentListProps) => {
               onClick={() => setIsModalOpen(true)}
               className={`${
                 isSelected ? "hidden" : "block"
-              } bg-[#0e327a] font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
+              } bg-[#0e327a] cursor-pointer font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2`}
             >
               <Plus className="w-4 h-4" />
               <span>เพิ่มนักเรียนใหม่</span>
