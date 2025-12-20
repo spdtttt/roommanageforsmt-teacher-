@@ -8,9 +8,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Select from "react-select";
-import { Users, Filter, Plus, Trash, MousePointerClick } from "lucide-react";
+import { Users, Filter, Plus, Trash, MousePointerClick, Upload } from "lucide-react";
 import StatCard from "./StatCard";
 import { BeatLoader } from "react-spinners";
+import CSVUploadModal from "./CSVUploadModal";
 
 type Student = {
   id: number;
@@ -214,11 +215,11 @@ const AddModal = ({
               ยกเลิก
             </button>
             <button
-              disabled={loading}
+              disabled={loading || !formData.student_id || !formData.name || !formData.class || !formData.gender}
               type="submit"
               className={`${
                 loading ? "bg-blue-500" : "bg-[#0e327a]"
-              } flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
+              } disabled:opacity-50 flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
             >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </button>
@@ -241,6 +242,7 @@ const StudentList = ({ Students }: StudentListProps) => {
   });
   const [isSelected, setIsSelected] = useState(false);
   const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
+  const [csvUploadModal, setCSVUploadModal] = useState(false);
 
   function onClose() {
     setIsModalOpen(false);
@@ -418,7 +420,7 @@ const StudentList = ({ Students }: StudentListProps) => {
 
         {/* Filter Button */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-10">
             <div className="flex items-center gap-2 text-sm text-gray-500 font-[Prompt]">
               <Filter className="w-4 h-4" />
               <span className="font-medium">ห้องเรียน:</span>
@@ -436,6 +438,10 @@ const StudentList = ({ Students }: StudentListProps) => {
                 defaultValue={optionsforSelect[0]}
               />
             </div>
+            <button onClick={() => setCSVUploadModal(true)} className="transition-colors duration-300 hover:bg-green-600 flex font-[Prompt] cursor-pointer items-center gap-2 font-semibold text-white bg-green-500 px-4 py-2 rounded-lg">
+                <Upload className="w-4 h-4" />
+                <span>อัปโหลดไฟล์ผ่านไฟล์ CSV</span>
+            </button>
           </div>
           <div className="gap-4 text-white cursor-pointer font-[Prompt] flex">
             <button
@@ -649,6 +655,11 @@ const StudentList = ({ Students }: StudentListProps) => {
           formData={formData}
           setFormData={setFormData}
           onSubmit={onSubmit}
+        />
+
+        <CSVUploadModal
+          csvUploadModal={csvUploadModal}
+          setCSVUploadModal={setCSVUploadModal}
         />
       </div>
     </>
