@@ -34,7 +34,7 @@ async function RoomData({
         id: r.id,
         member_ids: r.member_ids,
         camp_id: r.camp_id ?? camp_id,
-        note: r.note,
+        note: r.note ?? null,
     }))
     return <RoomTable rooms={rooms} />
 }
