@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         const newCamp = await prisma.student.create({
             data: {
                 student_id: student_id,
-                national_id: national_id,
+                national_id: String(national_id),
                 name: name,
                 gender: gender,
                 class: classroom

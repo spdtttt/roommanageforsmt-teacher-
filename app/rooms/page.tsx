@@ -26,12 +26,14 @@ async function CampData() {
         0
       );
 
+      // นักเรียนทั้งหมดในห้องเรียนนั้นๆ
       const classStudents = await prisma.student.findMany({
         where: {
           class: camp.class,
         },
       });
 
+      // หาจำนวนนักเรียนทั้งหมดและคิดค่า %
       const countStudents = classStudents.length;
       const percentage = camp.max
         ? (assignedStudents / countStudents) * 100

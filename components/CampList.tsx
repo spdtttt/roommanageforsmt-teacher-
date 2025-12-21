@@ -52,15 +52,21 @@ const formatDate = (dateString: string) => {
 
 const optionsforSelect = [
   { value: "all", label: "ทั้งหมด" },
-  { value: 409, label: "4/9" },
-  { value: 509, label: "5/9" },
-  { value: 609, label: "6/9" },
+  { value: 108, label: "ม.1/8" },
+  { value: 208, label: "ม.2/8" },
+  { value: 308, label: "ม.3/8" },
+  { value: 409, label: "ม.4/9" },
+  { value: 509, label: "ม.5/9" },
+  { value: 609, label: "ม.6/9" },
 ];
 
 const options = [
-  { value: 409, label: "4/9" },
-  { value: 509, label: "5/9" },
-  { value: 609, label: "6/9" },
+  { value: 108, label: "ม.1/8" },
+  { value: 208, label: "ม.2/8" },
+  { value: 308, label: "ม.3/8" },
+  { value: 409, label: "ม.4/9" },
+  { value: 509, label: "ม.5/9" },
+  { value: 609, label: "ม.6/9" },
 ];
 
 interface AddModalProps {
@@ -674,7 +680,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
           />
           <StatCard
             title="ห้องที่รองรับ"
-            value="3"
+            value={6}
             icon={GraduationCap}
             variant="default"
           />
@@ -764,6 +770,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: '85px'
                     }}
                   >
                     ที่
@@ -775,6 +782,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: '500px'
                     }}
                   >
                     ชื่อกิจกรรม
@@ -786,6 +794,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width:  '200px'
                     }}
                   >
                     ห้อง
@@ -797,6 +806,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width:  '200px'
                     }}
                   >
                     วันที่เริ่มต้น
@@ -808,6 +818,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width:  '200px'
                     }}
                   >
                     วันที่สิ้นสุด
@@ -819,6 +830,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width:  '200px'
                     }}
                   >
                     จำนวนคนต่อห้อง
@@ -874,10 +886,17 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       }}
                     >
                       {camp.class === 609
-                        ? "6/9"
+                        ? "ม.6/9"
                         : camp.class === 509
-                        ? "5/9"
-                        : "4/9"}
+                        ? "ม.5/9"
+                        : camp.class === 409
+                        ? 'ม.4/9'
+                        : camp.class === 308
+                        ? 'ม.3/8'
+                        : camp.class === 208
+                        ? 'ม.2/8'
+                        : 'ม.1/8'
+                      }
                     </TableCell>
                     <TableCell
                       align="center"

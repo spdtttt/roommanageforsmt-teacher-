@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Select from "react-select";
+import { Typography } from "@mui/material";
 import {
   Users,
   Filter,
@@ -56,16 +57,22 @@ interface AddModalProps {
 }
 
 const options = [
-  { value: 409, label: "4/9" },
-  { value: 509, label: "5/9" },
-  { value: 609, label: "6/9" },
+  { value: 108, label: "ม.1/8" },
+  { value: 208, label: "ม.2/8" },
+  { value: 308, label: "ม.3/8" },
+  { value: 409, label: "ม.4/9" },
+  { value: 509, label: "ม.5/9" },
+  { value: 609, label: "ม.6/9" },
 ];
 
 const optionsforSelect = [
   { value: "all", label: "ทั้งหมด" },
-  { value: 409, label: "4/9" },
-  { value: 509, label: "5/9" },
-  { value: 609, label: "6/9" },
+  { value: 108, label: "ม.1/8" },
+  { value: 208, label: "ม.2/8" },
+  { value: 308, label: "ม.3/8" },
+  { value: 409, label: "ม.4/9" },
+  { value: 509, label: "ม.5/9" },
+  { value: 609, label: "ม.6/9" },
 ];
 
 const optionsGender = [
@@ -103,7 +110,7 @@ const AddModal = ({
       onClick={onClose} // ปิด modal เมื่อคลิกพื้นหลัง
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform transition-all animate-scaleIn"
         onClick={(e) => e.stopPropagation()} // ป้องกันการปิด modal เมื่อคลิกภายใน
       >
         {/* Header */}
@@ -124,6 +131,7 @@ const AddModal = ({
             </label>
             <input
               autoComplete="off"
+              maxLength={5}
               type="text"
               name="studentID"
               value={formData.student_id || ""}
@@ -141,6 +149,7 @@ const AddModal = ({
               เลขประจำตัวประชาชน
             </label>
             <input
+              maxLength={13}
               autoComplete="off"
               type="text"
               name="nationalID"
@@ -436,34 +445,69 @@ const StudentList = ({ Students }: StudentListProps) => {
     <>
       <div className="p-6 lg:p-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="นักเรียนทั้งหมด"
-            value={`${Students.length} คน`}
-            icon={Users}
-            variant="primary"
-          />
-          <StatCard
-            title="ม.4/9"
-            value={`${
-              Students.filter((student) => student.class === 409).length
-            } คน`}
-            variant="default"
-          />
-          <StatCard
-            title="ม.5/9"
-            value={`${
-              Students.filter((student) => student.class === 509).length
-            } คน`}
-            variant="default"
-          />
-          <StatCard
-            title="ม.6/9"
-            value={`${
-              Students.filter((student) => student.class === 609).length
-            } คน`}
-            variant="default"
-          />
+        <div className="flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+            <StatCard
+              title="นักเรียน ม.ต้น"
+              value={`${
+                Students.filter((student) => student.class <= 308).length
+              } คน`}
+              icon={Users}
+              variant="primary"
+            />
+            <StatCard
+              title="ม.1/8"
+              value={`${
+                Students.filter((student) => student.class === 108).length
+              } คน`}
+              variant="default"
+            />
+            <StatCard
+              title="ม.2/8"
+              value={`${
+                Students.filter((student) => student.class === 208).length
+              } คน`}
+              variant="default"
+            />
+            <StatCard
+              title="ม.3/8"
+              value={`${
+                Students.filter((student) => student.class === 308).length
+              } คน`}
+              variant="default"
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              title="นักเรียน ม.ปลาย"
+              value={`${
+                Students.filter((student) => student.class >= 409).length
+              } คน`}
+              icon={Users}
+              variant="primary"
+            />
+            <StatCard
+              title="ม.4/9"
+              value={`${
+                Students.filter((student) => student.class === 409).length
+              } คน`}
+              variant="default"
+            />
+            <StatCard
+              title="ม.5/9"
+              value={`${
+                Students.filter((student) => student.class === 509).length
+              } คน`}
+              variant="default"
+            />
+            <StatCard
+              title="ม.6/9"
+              value={`${
+                Students.filter((student) => student.class === 609).length
+              } คน`}
+              variant="default"
+            />
+          </div>
         </div>
 
         {/* Filter Button */}
@@ -558,6 +602,7 @@ const StudentList = ({ Students }: StudentListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: "65px",
                     }}
                   >
                     ที่
@@ -569,6 +614,7 @@ const StudentList = ({ Students }: StudentListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: "200px",
                     }}
                   >
                     รหัสนักเรียน
@@ -580,6 +626,7 @@ const StudentList = ({ Students }: StudentListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: "600px",
                     }}
                   >
                     ชื่อ
@@ -591,6 +638,7 @@ const StudentList = ({ Students }: StudentListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
+                      width: "150px",
                     }}
                   >
                     ห้อง
@@ -610,91 +658,119 @@ const StudentList = ({ Students }: StudentListProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredStudents.map((student, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      align="center"
-                      style={{
-                        fontFamily: "Prompt",
-                        color: "#65758b",
-                        fontSize: "15px",
-                      }}
-                      component="th"
-                      scope="row"
-                    >
-                      {index + 1}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      style={{
-                        fontFamily: "Prompt",
-                        color: "black",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {student.student_id}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      style={{
-                        fontFamily: "Prompt",
-                        color: "black",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {student.name}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      style={{
-                        fontFamily: "Prompt",
-                        color: "black",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {student.class === 609
-                        ? "6/9"
-                        : student.class === 509
-                        ? "5/9"
-                        : "4/9"}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      style={{
-                        fontFamily: "Prompt",
-                        color: "black",
-                        fontSize: "15px",
-                      }}
-                    >
-                      <div className="flex justify-center gap-2">
-                        {isSelected ? (
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={selectedDelete.includes(student.id)}
-                              onChange={() => handleCheck(student.id)}
-                              className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a] cursor-pointer"
-                            />
-                          </div>
-                        ) : (
-                          <>
-                            <button
-                              disabled={loading}
-                              onClick={() => handleDelete(student.id)}
-                              className="flex items-center gap-2 px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300"
-                            >
-                              <Trash className="w-5 h-5" />
-                              ลบ
-                            </button>
-                          </>
-                        )}
-                      </div>
+                {!filteredStudents ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Typography
+                        style={{ fontFamily: "Prompt", color: "#65758b" }}
+                      >
+                        กำลังโหลดข้อมูล...
+                      </Typography>
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : filteredStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Typography
+                        style={{ fontFamily: "Prompt", color: "#65758b" }}
+                      >
+                        ไม่พบข้อมูลนักเรียน
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredStudents.map((student, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell
+                        align="center"
+                        style={{
+                          fontFamily: "Prompt",
+                          color: "#65758b",
+                          fontSize: "15px",
+                        }}
+                        component="th"
+                        scope="row"
+                      >
+                        {index + 1}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          fontFamily: "Prompt",
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {student.student_id}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          fontFamily: "Prompt",
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {student.name}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          fontFamily: "Prompt",
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {student.class === 609
+                          ? "ม.6/9"
+                          : student.class === 509
+                          ? "ม.5/9"
+                          : student.class === 409
+                          ? "ม.4/9"
+                          : student.class === 308
+                          ? "ม.3/8"
+                          : student.class === 208
+                          ? "ม.2/8"
+                          : "ม.1/8"}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        style={{
+                          fontFamily: "Prompt",
+                          color: "black",
+                          fontSize: "15px",
+                        }}
+                      >
+                        <div className="flex justify-center gap-2">
+                          {isSelected ? (
+                            <div className="flex items-center">
+                              <input
+                                type="checkbox"
+                                checked={selectedDelete.includes(student.id)}
+                                onChange={() => handleCheck(student.id)}
+                                className="w-[36px] h-[36px] bg-white border-2 rounded checked:bg-[#0e327a] cursor-pointer"
+                              />
+                            </div>
+                          ) : (
+                            <>
+                              <button
+                                disabled={loading}
+                                onClick={() => handleDelete(student.id)}
+                                className="flex items-center gap-2 px-2 py-1 md:py-1.5 md:px-3 text-sm md:text-base bg-red-500 text-white hover:bg-red-600 rounded cursor-pointer transition-all duration-300"
+                              >
+                                <Trash className="w-5 h-5" />
+                                ลบ
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
