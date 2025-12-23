@@ -6,6 +6,7 @@ import { prisma } from "@/prisma";
 import { notFound } from "next/navigation";
 import StatsCamp from "@/components/StatsCamp";
 import { Room } from "@prisma/client";
+import AssignedStudentsButton from "@/components/AssignedStudentsButton";
 
 export const revalidate = 0;
 
@@ -69,15 +70,13 @@ const CampDetails = async ({
     <div className="w-full h-full flex flex-col">
       <header className="py-5 bg-white border-b border-[#e1e7ef] flex items-center justify-between px-6 lg:px-8 w-full">
         <div>
-          <h1 className="text-2xl font-bold text-black font-[Prompt]">{`${
-            campInfo.title
-          } ม.${
-            campInfo.class === 409
+          <h1 className="text-2xl font-bold text-black font-[Prompt]">{`${campInfo.title
+            } ม.${campInfo.class === 409
               ? "4/9"
               : campInfo.class === 509
-              ? "5/9"
-              : "6/9"
-          }`}</h1>
+                ? "5/9"
+                : "6/9"
+            }`}</h1>
           <p className="text-sm font-[Prompt] text-gray-500">
             จัดการห้องพักของนักเรียนในแต่ละรายการค่าย
           </p>
@@ -85,7 +84,10 @@ const CampDetails = async ({
       </header>
 
       <div className="p-6 lg:p-8">
-        <UnassignedStudentsButton campId={camp_idNum} campInfo={campInfo} />
+        <div className="mb-6 flex gap-4">
+          <UnassignedStudentsButton campId={camp_idNum} campInfo={campInfo} />
+          <AssignedStudentsButton campId={camp_idNum} campInfo={campInfo} />
+        </div>
         <Suspense
           fallback={
             <div className="flex justify-center items-center py-20">

@@ -15,7 +15,7 @@ const UnassignedStudentsButton = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <div className='mb-6'>
+    <div>
       <button
         onClick={() => setIsModalOpen(true)}
         className="flex gap-3 items-center cursor-pointer px-4 font-bold py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-[20px] font-[Prompt]"

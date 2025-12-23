@@ -9,7 +9,7 @@ import { useAuth } from './AuthProvider'
 const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'แดชบอร์ด', details: '' },
     { id: 'students', icon: Users, label: 'นักเรียน', details: 'students' },
-    { id: 'rooms', icon: School, label: 'ห้อง', details: 'rooms' },
+    { id: 'rooms', icon: School, label: 'รายการห้องพัก', details: 'rooms' },
 ]
 
 const Sidebar = () => {

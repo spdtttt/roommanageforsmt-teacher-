@@ -64,13 +64,13 @@ const UnassignedStudentsModal = ({
     if (!printWindow) return;
 
     // สร้าง HTML สำหรับพิมพ์
-    const title = `รายชื่อนักเรียนที่ยังไม่ได้ลงห้องพัก ${campInfo?.title} ${
-      campInfo?.class === 409
-        ? "ม.4/9"
-        : campInfo?.class === 509
-        ? "ม.5/9"
-        : "ม.6/9"
-    }`;
+    const title = `รายชื่อนักเรียนที่ยังไม่ได้ลงห้องพัก ${campInfo?.class === 108 ? 'ม.1/8'
+      : campInfo?.class === 208 ? 'ม.2/8'
+        : campInfo?.class === 308 ? 'ม.3/8'
+          : campInfo?.class === 409 ? 'ม.4/9'
+            : campInfo?.class === 509 ? 'ม.5/9'
+              : 'ม.6/9'
+      }`;
 
     let tableRows = "";
     students.forEach((student, index) => {
