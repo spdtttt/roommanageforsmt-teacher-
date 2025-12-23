@@ -82,7 +82,6 @@ const AssignedStudentsButton = ({ campId, campInfo }: { campId: number, campInfo
               box-sizing: border-box;
             }
             body {
-              font-family: 'Prompt', sans-serif;
               padding: 20px;
             }
             .print-title {
@@ -173,7 +172,7 @@ const AssignedStudentsButton = ({ campId, campInfo }: { campId: number, campInfo
       className={`cursor-pointer ${loading ? 'opacity-50 cursor-not-allowed' : ''} flex gap-3 items-center cursor-pointer px-4 font-bold py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-[20px] font-[Prompt]`}
     >
       <MousePointerClick className='w-6 h-6' />
-      ดูรายการห้องพักของนักเรียน
+      พิมพ์รายการห้องพักของนักเรียน
     </button>
   )
 }

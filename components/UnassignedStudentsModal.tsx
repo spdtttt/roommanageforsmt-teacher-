@@ -98,7 +98,6 @@ const UnassignedStudentsModal = ({
               box-sizing: border-box;
             }
             body {
-              font-family: 'Prompt', sans-serif;
               padding: 20px;
             }
             .print-title {
