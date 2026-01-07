@@ -30,7 +30,7 @@ model Camp {
   title     String?
   class     Int?
   dateStart DateTime? @db.Date
-  max       Int?
   dateEnd   DateTime? @db.Date
+  roomTypes Json[]    @db.Json
   rooms     Room[]
 }

@@ -7,7 +7,8 @@ interface Camp {
   class: number;
   dateStart: string;
   dateEnd: string;
-  max: number;
+  max?: any; // optional สำหรับ API ใหม่
+  roomTypes?: any; // optional สำหรับ backward compatibility
   percentage: number;
 }
 
@@ -25,6 +26,22 @@ const CampShow = ({ camps }: { camps: Camp[] }) => {
 
     return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
   };
+
+  // ฟังก์ชันแสดงรูปแบบห้อง
+  const formatRoomTypes = (roomTypes: any) => {
+    if (!roomTypes) return "-";
+    
+    // ถ้าเป็น array ของ objects
+    if (Array.isArray(roomTypes)) {
+      return roomTypes
+        .map((rt: any) => `${rt.peoplePerRoom} คน/ห้อง (${rt.roomCount} ห้อง)`)
+        .join(", ");
+    }
+    
+    // ถ้าเป็นค่าเดี่ยว (backward compatibility)
+    return `${roomTypes} คน/ห้อง`;
+  };
+
   return (
     <>
       {/* Grid responsive: 1 col (mobile), 2 cols (tablet), 3 cols (desktop) */}
@@ -59,7 +76,7 @@ const CampShow = ({ camps }: { camps: Camp[] }) => {
                   : "6/9"}
               </p>
               <p className="text-sm sm:text-base text-gray-500 font-medium">
-                จำนวนคนต่อห้อง: {item.max}
+                รูปแบบห้อง: {formatRoomTypes(item.max || item.roomTypes)}
               </p>
               <p className="text-sm sm:text-base text-gray-500 font-medium">
                 วันที่: {formatDateRange(item.dateStart, item.dateEnd)}

@@ -56,7 +56,7 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    const { title, class: classroom, dateStart, dateEnd, max } = body;
+    const { title, class: classroom, dateStart, dateEnd, roomTypes } = body;
 
     const { camp_id } = await context.params;
     const id = parseInt(camp_id, 10);
@@ -68,7 +68,7 @@ export async function PUT(
         class: classroom,
         dateStart: new Date(dateStart),
         dateEnd: new Date(dateEnd),
-        max
+        roomTypes: roomTypes
       }
     });
 

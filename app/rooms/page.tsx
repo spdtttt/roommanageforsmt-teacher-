@@ -35,7 +35,7 @@ async function CampData() {
 
       // หาจำนวนนักเรียนทั้งหมดและคิดค่า %
       const countStudents = classStudents.length;
-      const percentage = camp.max
+      const percentage = camp.roomTypes
         ? (assignedStudents / countStudents) * 100
         : 0;
 
@@ -43,7 +43,7 @@ async function CampData() {
         id: camp.id,
         title: camp.title ?? "ไม่ระบุชื่อค่าย",
         class: camp.class ?? 0,
-        max: camp.max ?? 0,
+        roomTypes: camp.roomTypes ?? 0,
         dateStart: camp.dateStart ? camp.dateStart.toISOString() : "",
         dateEnd: camp.dateEnd ? camp.dateEnd.toISOString() : "",
         percentage: Math.round(percentage * 100) / 100, 

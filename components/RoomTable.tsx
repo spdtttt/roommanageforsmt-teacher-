@@ -81,14 +81,15 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
       if (!resp.ok) {
         throw new Error("Failed to delete selected rooms");
       }
+
+      setSelectedDelete([]);
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting rooms camps:", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
     } finally {
       setLoading(false);
       setIsSelected(false);
-      setSelectedDelete([]);
-      window.location.reload();
     }
   };
 
@@ -139,9 +140,8 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
             <span>{!isSelected ? "เลือก" : "ยกเลิก"}</span>
           </div>
           <div
-            className={`${
-              isSelected ? "block" : "hidden"
-            } font-[Prompt] text-white bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 cursor-pointer`}
+            className={`${isSelected ? "block" : "hidden"
+              } font-[Prompt] text-white bg-red-500 hover:bg-red-600 font-bold p-2 sm:p-3 rounded-lg flex items-center shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 cursor-pointer`}
             onClick={handleSelectDeleted}
           >
             <Trash className="w-5 h-5" />
@@ -187,7 +187,7 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
                 align="left"
                 style={{
                   fontFamily: "Prompt",
-                  width: "100px",
+                  width: "140px",
                   color: "#65758b",
                   fontWeight: "bold",
                   fontSize: "17px",

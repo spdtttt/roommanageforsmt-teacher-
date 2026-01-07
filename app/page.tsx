@@ -13,7 +13,7 @@ const CampPage = async () => {
     class: c.class ?? 0,
     dateStart: (c.dateStart ?? new Date()).toISOString(),
     dateEnd: (c.dateEnd ?? new Date()).toISOString(),
-    max: c.max ?? 0,
+    roomTypes: c.roomTypes
   }));
 
   const dbStudents = await prisma.room.findMany({

@@ -29,12 +29,11 @@ interface Camp {
   class: number;
   dateStart: string;
   dateEnd: string;
-  max: number;
+  roomTypes: any; // รองรับ JsonValue[] จาก database
 }
 
 interface CampListProps {
   Camps: Camp[];
-  // Optional array of student IDs (numbers) gathered from rooms
   Students?: number[];
 }
 
@@ -77,7 +76,7 @@ interface AddModalProps {
     class: any;
     dateStart: string;
     dateEnd: string;
-    max: number;
+    roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
   };
   setFormData: React.Dispatch<
     React.SetStateAction<{
@@ -85,7 +84,7 @@ interface AddModalProps {
       class: any;
       dateStart: string;
       dateEnd: string;
-      max: number;
+      roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
     }>
   >;
   onSubmit: (e: React.FormEvent) => void;
@@ -100,7 +99,7 @@ interface EditModalProps {
     class: number | null;
     dateStart: string;
     dateEnd: string;
-    max: number;
+    roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
   };
   setCampData: React.Dispatch<
     React.SetStateAction<{
@@ -109,7 +108,7 @@ interface EditModalProps {
       class: number | null;
       dateStart: string;
       dateEnd: string;
-      max: number;
+      roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
     }>
   >;
 }
@@ -144,18 +143,42 @@ const AddModal = ({
     }
   };
 
+  const addRoomType = () => {
+    setFormData({
+      ...formData,
+      roomTypes: [...formData.roomTypes, { peoplePerRoom: 1, roomCount: 1 }],
+    });
+  };
+
+  const removeRoomType = (index: number) => {
+    setFormData({
+      ...formData,
+      roomTypes: formData.roomTypes.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateRoomType = (
+    index: number,
+    field: "peoplePerRoom" | "roomCount",
+    value: number
+  ) => {
+    const newRoomTypes = [...formData.roomTypes];
+    newRoomTypes[index][field] = value;
+    setFormData({ ...formData, roomTypes: newRoomTypes });
+  };
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
-      onClick={onClose} // ปิดเมื่อคลิกพื้นหลัง
+      onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800 sticky top-0 z-10">
           <h2 className="text-2xl font-bold text-white font-[Prompt]">
             เพิ่มค่าย & กิจกรรม
           </h2>
@@ -250,22 +273,85 @@ const AddModal = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
-              จำนวนคนต่อห้อง
-            </label>
-            <input
-              autoComplete="off"
-              type="number"
-              name="max"
-              value={formData.max || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, max: Number(e.target.value) })
-              }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
-              placeholder="กรอกจำนวนคน"
-              min="1"
-              required
-            />
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-semibold text-gray-800">
+                รูปแบบห้อง
+              </label>
+              <button
+                type="button"
+                onClick={addRoomType}
+                className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                เพิ่มรูปแบบ
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {formData.roomTypes.map((roomType, index) => (
+                <div
+                  key={index}
+                  className="p-4 border-2 border-gray-200 rounded-lg space-y-3"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-gray-700">
+                      รูปแบบที่ {index + 1}
+                    </span>
+                    {formData.roomTypes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRoomType(index)}
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      จำนวนคนต่อห้อง
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={roomType.peoplePerRoom}
+                      onChange={(e) =>
+                        updateRoomType(
+                          index,
+                          "peoplePerRoom",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      placeholder="เช่น 3"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      จำนวนห้อง
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={roomType.roomCount}
+                      onChange={(e) =>
+                        updateRoomType(
+                          index,
+                          "roomCount",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      placeholder="เช่น 2"
+                      required
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Footer */}
@@ -321,7 +407,7 @@ const EditModal = ({
           class: campData.class,
           dateStart: campData.dateStart,
           dateEnd: campData.dateEnd,
-          max: campData.max,
+          roomTypes: campData.roomTypes,
         }),
       });
 
@@ -339,6 +425,30 @@ const EditModal = ({
     }
   };
 
+  const addRoomType = () => {
+    setCampData({
+      ...campData,
+      roomTypes: [...campData.roomTypes, { peoplePerRoom: 1, roomCount: 1 }],
+    });
+  };
+
+  const removeRoomType = (index: number) => {
+    setCampData({
+      ...campData,
+      roomTypes: campData.roomTypes.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateRoomType = (
+    index: number,
+    field: "peoplePerRoom" | "roomCount",
+    value: number
+  ) => {
+    const newRoomTypes = [...campData.roomTypes];
+    newRoomTypes[index][field] = value;
+    setCampData({ ...campData, roomTypes: newRoomTypes });
+  };
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn"
@@ -346,11 +456,11 @@ const EditModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn"
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform transition-all animate-scaleIn max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-6 border-b border-blue-800 sticky top-0 z-10">
           <h2 className="text-2xl font-bold text-white font-[Prompt]">
             แก้ไขค่าย & กิจกรรม
           </h2>
@@ -446,22 +556,85 @@ const EditModal = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
-              จำนวนคนต่อห้อง
-            </label>
-            <input
-              autoComplete="off"
-              type="number"
-              name="max"
-              value={campData.max || ""}
-              onChange={(e) =>
-                setCampData({ ...campData, max: Number(e.target.value) })
-              }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
-              placeholder="กรอกจำนวนคน"
-              min="1"
-              required
-            />
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-semibold text-gray-800">
+                รูปแบบห้อง
+              </label>
+              <button
+                type="button"
+                onClick={addRoomType}
+                className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                เพิ่มรูปแบบ
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {campData.roomTypes.map((roomType, index) => (
+                <div
+                  key={index}
+                  className="p-4 border-2 border-gray-200 rounded-lg space-y-3"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-gray-700">
+                      รูปแบบที่ {index + 1}
+                    </span>
+                    {campData.roomTypes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRoomType(index)}
+                        className="text-red-500 hover:text-red-700 transition-colors"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      จำนวนคนต่อห้อง
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={roomType.peoplePerRoom}
+                      onChange={(e) =>
+                        updateRoomType(
+                          index,
+                          "peoplePerRoom",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      placeholder="เช่น 3"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      จำนวนห้อง
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={roomType.roomCount}
+                      onChange={(e) =>
+                        updateRoomType(
+                          index,
+                          "roomCount",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      placeholder="เช่น 2"
+                      required
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Footer */}
@@ -500,7 +673,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
     class: Number(""),
     dateStart: "",
     dateEnd: "",
-    max: Number(""),
+    roomTypes: [{ peoplePerRoom: 1, roomCount: 1 }],
   });
   const [campData, setCampData] = useState({
     id: Number(""),
@@ -508,7 +681,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
     class: null as number | null,
     dateStart: "",
     dateEnd: "",
-    max: Number(""),
+    roomTypes: [{ peoplePerRoom: 1, roomCount: 1 }],
   });
   const [selectedDelete, setSelectedDelete] = useState<number[]>([]);
   const [isSelected, setIsSelected] = useState(false);
@@ -557,7 +730,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       class: Number(""),
       dateStart: "",
       dateEnd: "",
-      max: Number(""),
+      roomTypes: [{ peoplePerRoom: 1, roomCount: 1 }],
     });
     setCampData({
       id: Number(""),
@@ -565,7 +738,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       class: Number(""),
       dateStart: "",
       dateEnd: "",
-      max: Number(""),
+      roomTypes: [{ peoplePerRoom: 1, roomCount: 1 }],
     });
   }
 
@@ -578,7 +751,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
         classroom: formData.class,
         dateStart: formData.dateStart,
         dateEnd: formData.dateEnd,
-        max: formData.max,
+        roomTypes: formData.roomTypes,
       };
 
       const response = await fetch(`/api/camps`, {
@@ -643,7 +816,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       class: camp.class,
       dateStart: formatDateForInput(camp.dateStart),
       dateEnd: formatDateForInput(camp.dateEnd),
-      max: camp.max,
+      roomTypes: camp.roomTypes || [{ peoplePerRoom: 1, roomCount: 1 }],
     });
     setIsEditModalOpen(true);
   };
@@ -652,6 +825,15 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
     filterClass === "all"
       ? Camps
       : Camps.filter((camp) => camp.class === Number(filterClass));
+
+  // ฟังก์ชันแสดงรูปแบบห้องในตาราง
+  const formatRoomTypes = (roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>) => {
+    if (!roomTypes || roomTypes.length === 0) return "-";
+    
+    return roomTypes
+      .map((rt) => `${rt.peoplePerRoom} คน/ห้อง (${rt.roomCount} ห้อง)`)
+      .join(", ");
+  };
 
   if (loading) {
     return (
@@ -770,7 +952,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width: '85px'
+                      width: "85px",
                     }}
                   >
                     ที่
@@ -782,7 +964,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width: '500px'
+                      width: "400px",
                     }}
                   >
                     ชื่อกิจกรรม
@@ -794,7 +976,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width:  '200px'
+                      width: "150px",
                     }}
                   >
                     ห้อง
@@ -806,7 +988,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width:  '200px'
+                      width: "180px",
                     }}
                   >
                     วันที่เริ่มต้น
@@ -818,7 +1000,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width:  '200px'
+                      width: "180px",
                     }}
                   >
                     วันที่สิ้นสุด
@@ -830,10 +1012,10 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       color: "#65758b",
                       fontWeight: "bold",
                       fontSize: "17px",
-                      width:  '200px'
+                      width: "280px",
                     }}
                   >
-                    จำนวนคนต่อห้อง
+                    รูปแบบห้อง
                   </TableCell>
                   <TableCell
                     align="center"
@@ -890,13 +1072,12 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                         : camp.class === 509
                         ? "ม.5/9"
                         : camp.class === 409
-                        ? 'ม.4/9'
+                        ? "ม.4/9"
                         : camp.class === 308
-                        ? 'ม.3/8'
+                        ? "ม.3/8"
                         : camp.class === 208
-                        ? 'ม.2/8'
-                        : 'ม.1/8'
-                      }
+                        ? "ม.2/8"
+                        : "ม.1/8"}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -923,10 +1104,10 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
                       style={{
                         fontFamily: "Prompt",
                         color: "black",
-                        fontSize: "15px",
+                        fontSize: "14px",
                       }}
                     >
-                      {camp.max}
+                      {formatRoomTypes(camp.roomTypes)}
                     </TableCell>
                     <TableCell
                       align="center"

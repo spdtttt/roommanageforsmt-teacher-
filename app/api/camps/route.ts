@@ -14,9 +14,9 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { title, classroom, dateStart, dateEnd, max } = body;
+        const { title, classroom, dateStart, dateEnd, roomTypes } = body;
 
-        if (!title || !classroom || !dateStart || !dateEnd || !max) {
+        if (!title || !classroom || !dateStart || !dateEnd || !roomTypes) {
             return NextResponse.json({ error: 'Missing or invalid data' }, { status: 400 })
         }
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
                 class: classroom,
                 dateStart: new Date(dateStart),
                 dateEnd: new Date(dateEnd),
-                max: max
+                roomTypes: roomTypes
             }
         })
 
