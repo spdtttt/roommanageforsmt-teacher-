@@ -12,7 +12,6 @@ import {
   MousePointerClick,
   Trash,
   SquarePen,
-  Square,
 } from "lucide-react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -29,7 +28,7 @@ interface Camp {
   class: number;
   dateStart: string;
   dateEnd: string;
-  roomTypes: any; // รองรับ JsonValue[] จาก database
+  roomTypes: any;
 }
 
 interface CampListProps {
@@ -39,7 +38,6 @@ interface CampListProps {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  // แก้ปัญหา timezone โดยบวก offset ของ Thailand (UTC+7)
   const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
 
   return utcDate.toLocaleDateString("th-TH", {
@@ -87,7 +85,8 @@ interface AddModalProps {
       roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
     }>
   >;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
+  loading: boolean;
 }
 
 interface EditModalProps {
@@ -111,6 +110,8 @@ interface EditModalProps {
       roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>;
     }>
   >;
+  onEditSubmit: (e: React.FormEvent) => Promise<void>;
+  loading: boolean;
 }
 
 const AddModal = ({
@@ -119,29 +120,15 @@ const AddModal = ({
   formData,
   setFormData,
   onSubmit,
+  loading,
 }: AddModalProps) => {
   if (!isOpen) return null;
-
-  const [loading, setLoading] = useState(false);
 
   const today = new Date();
   const year = today.getFullYear();
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
   const day = today.getDate().toString().padStart(2, "0");
   const formattedDate = `${year}-${month}-${day}`;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      onSubmit(e);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const addRoomType = () => {
     setFormData({
@@ -188,7 +175,7 @@ const AddModal = ({
         </div>
 
         {/* Body */}
-        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSubmit}>
+        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={onSubmit}>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               ชื่อกิจกรรม
@@ -197,7 +184,8 @@ const AddModal = ({
               autoComplete="off"
               type="text"
               name="title"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
               placeholder="กรอกชื่อกิจกรรม"
               value={formData.title}
               onChange={(e) =>
@@ -221,6 +209,7 @@ const AddModal = ({
                 })
               }
               placeholder="เลือกห้อง"
+              isDisabled={loading}
               styles={{
                 control: (base, state) => ({
                   ...base,
@@ -250,7 +239,8 @@ const AddModal = ({
               onChange={(e) =>
                 setFormData({ ...formData, dateStart: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
@@ -267,7 +257,8 @@ const AddModal = ({
               onChange={(e) =>
                 setFormData({ ...formData, dateEnd: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
@@ -280,7 +271,8 @@ const AddModal = ({
               <button
                 type="button"
                 onClick={addRoomType}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+                disabled={loading}
+                className="disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 เพิ่มรูปแบบ
@@ -301,7 +293,8 @@ const AddModal = ({
                       <button
                         type="button"
                         onClick={() => removeRoomType(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        disabled={loading}
+                        className="disabled:opacity-50 disabled:cursor-not-allowed text-red-500 hover:text-red-700 transition-colors"
                       >
                         <Trash className="w-4 h-4" />
                       </button>
@@ -323,7 +316,8 @@ const AddModal = ({
                           Number(e.target.value)
                         )
                       }
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      disabled={loading}
+                      className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
                       placeholder="เช่น 3"
                       required
                     />
@@ -344,7 +338,8 @@ const AddModal = ({
                           Number(e.target.value)
                         )
                       }
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      disabled={loading}
+                      className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
                       placeholder="เช่น 2"
                       required
                     />
@@ -360,16 +355,14 @@ const AddModal = ({
               disabled={loading}
               type="button"
               onClick={onClose}
-              className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
+              className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
             >
               ยกเลิก
             </button>
             <button
               disabled={loading}
               type="submit"
-              className={`${
-                loading ? "bg-blue-500" : "bg-[#0e327a]"
-              } flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
+              className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:bg-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
             >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </button>
@@ -380,50 +373,15 @@ const AddModal = ({
   );
 };
 
-// หน้าต่างแก้ไขข้อมูลค่าย
 const EditModal = ({
   isEditModalOpen,
   onClose,
   campData,
   setCampData,
+  onEditSubmit,
+  loading,
 }: EditModalProps) => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
   if (!isEditModalOpen) return null;
-
-  const handleSave = async (e: React.FormEvent) => {
-    setLoading(true);
-    try {
-      e.preventDefault();
-
-      const response = await fetch(`/api/camps/${campData.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: campData.title,
-          class: campData.class,
-          dateStart: campData.dateStart,
-          dateEnd: campData.dateEnd,
-          roomTypes: campData.roomTypes,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Response not OK");
-      }
-
-      onClose();
-    } catch (err) {
-      console.error("Error editing details:", err);
-    } finally {
-      setLoading(false);
-      window.location.reload();
-      router.push("/");
-    }
-  };
 
   const addRoomType = () => {
     setCampData({
@@ -470,7 +428,7 @@ const EditModal = ({
         </div>
 
         {/* Body */}
-        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={handleSave}>
+        <form className="p-8 space-y-6 font-[Prompt]" onSubmit={onEditSubmit}>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               ชื่อกิจกรรม
@@ -479,7 +437,8 @@ const EditModal = ({
               autoComplete="off"
               type="text"
               name="title"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900 placeholder-gray-400"
               placeholder="กรอกชื่อกิจกรรม"
               value={campData.title}
               onChange={(e) => {
@@ -506,6 +465,7 @@ const EditModal = ({
                 })
               }
               placeholder="เลือกห้อง..."
+              isDisabled={loading}
               styles={{
                 control: (base, state) => ({
                   ...base,
@@ -534,7 +494,8 @@ const EditModal = ({
               onChange={(e) =>
                 setCampData({ ...campData, dateStart: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
@@ -550,7 +511,8 @@ const EditModal = ({
               onChange={(e) =>
                 setCampData({ ...campData, dateEnd: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
+              disabled={loading}
+              className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 font-[Prompt] text-gray-900"
               required
             />
           </div>
@@ -563,7 +525,8 @@ const EditModal = ({
               <button
                 type="button"
                 onClick={addRoomType}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+                disabled={loading}
+                className="disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 เพิ่มรูปแบบ
@@ -584,7 +547,8 @@ const EditModal = ({
                       <button
                         type="button"
                         onClick={() => removeRoomType(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        disabled={loading}
+                        className="disabled:opacity-50 disabled:cursor-not-allowed text-red-500 hover:text-red-700 transition-colors"
                       >
                         <Trash className="w-4 h-4" />
                       </button>
@@ -606,7 +570,8 @@ const EditModal = ({
                           Number(e.target.value)
                         )
                       }
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      disabled={loading}
+                      className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
                       placeholder="เช่น 3"
                       required
                     />
@@ -627,7 +592,8 @@ const EditModal = ({
                           Number(e.target.value)
                         )
                       }
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
+                      disabled={loading}
+                      className="disabled:opacity-50 disabled:cursor-not-allowed w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900"
                       placeholder="เช่น 2"
                       required
                     />
@@ -643,16 +609,14 @@ const EditModal = ({
               disabled={loading}
               type="button"
               onClick={onClose}
-              className="flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
+              className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 cursor-pointer px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 font-[Prompt]"
             >
               ยกเลิก
             </button>
             <button
               disabled={loading}
               type="submit"
-              className={`${
-                loading ? "bg-blue-500" : "bg-[#0e327a]"
-              } flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]`}
+              className="disabled:opacity-50 disabled:cursor-not-allowed flex-1 cursor-pointer px-4 py-3 bg-[#0e327a] text-white font-semibold rounded-lg hover:bg-blue-700 active:scale-95 shadow-md hover:shadow-lg transition-all duration-200 font-[Prompt]"
             >
               {loading ? "กำลังบันทึก..." : "บันทึก"}
             </button>
@@ -711,6 +675,8 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       if (!resp.ok) {
         throw new Error("Failed to delete selected camps");
       }
+
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting selected camps:", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
@@ -718,7 +684,6 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       setLoading(false);
       setIsSelected(false);
       setSelectedDelete([]);
-      window.location.reload();
     }
   };
 
@@ -735,7 +700,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
     setCampData({
       id: Number(""),
       title: "",
-      class: Number(""),
+      class: null,
       dateStart: "",
       dateEnd: "",
       roomTypes: [{ peoplePerRoom: 1, roomCount: 1 }],
@@ -744,6 +709,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const dataToSend = {
@@ -768,11 +734,47 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
 
       const result = await response.json();
       console.log("Success:", result);
-    } catch (err) {
-      console.error("Error fetch API Add Camp: ", err);
-    } finally {
+
       onClose();
       window.location.reload();
+    } catch (err) {
+      console.error("Error fetch API Add Camp: ", err);
+      alert("เกิดข้อผิดพลาดในการสร้างค่าย");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onEditSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch(`/api/camps/${campData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: campData.title,
+          class: campData.class,
+          dateStart: campData.dateStart,
+          dateEnd: campData.dateEnd,
+          roomTypes: campData.roomTypes,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update camp");
+      }
+
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      console.error("Error editing details:", err);
+      alert("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -791,17 +793,17 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
 
       const result = await response.json();
       console.log(result.message);
+
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting camp:", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
     } finally {
       setLoading(false);
-      window.location.reload();
     }
   }
 
   const updateCampDataFocus = async (camp: any) => {
-    // Convert ISO string to YYYY-MM-DD format for date input
     const formatDateForInput = (isoString: string) => {
       const date = new Date(isoString);
       const year = date.getFullYear();
@@ -826,10 +828,11 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       ? Camps
       : Camps.filter((camp) => camp.class === Number(filterClass));
 
-  // ฟังก์ชันแสดงรูปแบบห้องในตาราง
-  const formatRoomTypes = (roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>) => {
+  const formatRoomTypes = (
+    roomTypes: Array<{ peoplePerRoom: number; roomCount: number }>
+  ) => {
     if (!roomTypes || roomTypes.length === 0) return "-";
-    
+
     return roomTypes
       .map((rt) => `${rt.peoplePerRoom} คน/ห้อง (${rt.roomCount} ห้อง)`)
       .join(", ");
@@ -1161,6 +1164,7 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
         formData={formData}
         setFormData={setFormData}
         onSubmit={onSubmit}
+        loading={loading}
       />
 
       <EditModal
@@ -1168,6 +1172,8 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
         onClose={onClose}
         campData={campData}
         setCampData={setCampData}
+        onEditSubmit={onEditSubmit}
+        loading={loading}
       />
     </>
   );
