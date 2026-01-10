@@ -394,7 +394,6 @@ const StudentList = ({ Students }: StudentListProps) => {
       }
 
       const result = await response.json();
-      console.log("Success:", result);
     } catch (err) {
       console.error("Error fetch API Add Student: ", err);
     } finally {
@@ -418,9 +417,8 @@ const StudentList = ({ Students }: StudentListProps) => {
       }
 
       const result = await response.json();
-      console.log(result.message);
     } catch (err) {
-      console.log("Error Deleting Student: ", err);
+      console.error("Error Deleting Student: ", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูลนักเรียน");
     } finally {
       setLoading(false);
@@ -445,8 +443,9 @@ const StudentList = ({ Students }: StudentListProps) => {
     <>
       <div className="p-6 lg:p-8">
         {/* Stats Grid */}
-        <div className="flex flex-col">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Secondary Students Section */}
+          <div className="flex flex-col gap-4">
             <StatCard
               title="นักเรียน ม.ต้น"
               value={`${
@@ -455,29 +454,33 @@ const StudentList = ({ Students }: StudentListProps) => {
               icon={Users}
               variant="primary"
             />
-            <StatCard
-              title="ม.1/8"
-              value={`${
-                Students.filter((student) => student.class === 108).length
-              } คน`}
-              variant="default"
-            />
-            <StatCard
-              title="ม.2/8"
-              value={`${
-                Students.filter((student) => student.class === 208).length
-              } คน`}
-              variant="default"
-            />
-            <StatCard
-              title="ม.3/8"
-              value={`${
-                Students.filter((student) => student.class === 308).length
-              } คน`}
-              variant="default"
-            />
+            <div className="grid grid-cols-3 gap-3">
+              <StatCard
+                title="ม.1/8"
+                value={`${
+                  Students.filter((student) => student.class === 108).length
+                } คน`}
+                variant="default"
+              />
+              <StatCard
+                title="ม.2/8"
+                value={`${
+                  Students.filter((student) => student.class === 208).length
+                } คน`}
+                variant="default"
+              />
+              <StatCard
+                title="ม.3/8"
+                value={`${
+                  Students.filter((student) => student.class === 308).length
+                } คน`}
+                variant="default"
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+          {/* High Students Section */}
+          <div className="flex flex-col gap-4">
             <StatCard
               title="นักเรียน ม.ปลาย"
               value={`${
@@ -486,27 +489,29 @@ const StudentList = ({ Students }: StudentListProps) => {
               icon={Users}
               variant="primary"
             />
-            <StatCard
-              title="ม.4/9"
-              value={`${
-                Students.filter((student) => student.class === 409).length
-              } คน`}
-              variant="default"
-            />
-            <StatCard
-              title="ม.5/9"
-              value={`${
-                Students.filter((student) => student.class === 509).length
-              } คน`}
-              variant="default"
-            />
-            <StatCard
-              title="ม.6/9"
-              value={`${
-                Students.filter((student) => student.class === 609).length
-              } คน`}
-              variant="default"
-            />
+            <div className="grid grid-cols-3 gap-3">
+              <StatCard
+                title="ม.4/9"
+                value={`${
+                  Students.filter((student) => student.class === 409).length
+                } คน`}
+                variant="default"
+              />
+              <StatCard
+                title="ม.5/9"
+                value={`${
+                  Students.filter((student) => student.class === 509).length
+                } คน`}
+                variant="default"
+              />
+              <StatCard
+                title="ม.6/9"
+                value={`${
+                  Students.filter((student) => student.class === 609).length
+                } คน`}
+                variant="default"
+              />
+            </div>
           </div>
         </div>
 

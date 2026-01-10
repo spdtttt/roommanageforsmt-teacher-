@@ -733,7 +733,6 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       }
 
       const result = await response.json();
-      console.log("Success:", result);
 
       onClose();
       window.location.reload();
@@ -792,8 +791,6 @@ const CampList = ({ Camps, Students = [] }: CampListProps) => {
       }
 
       const result = await response.json();
-      console.log(result.message);
-
       window.location.reload();
     } catch (err) {
       console.error("Error deleting camp:", err);

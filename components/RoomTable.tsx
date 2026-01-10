@@ -107,7 +107,6 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
       }
 
       const result = await response.json();
-      console.log(result.message);
     } catch (err) {
       console.error("Error deleting room:", err);
       alert("เกิดข้อผิดพลาดในการลบข้อมูล");
@@ -187,7 +186,7 @@ const RoomTable = ({ rooms }: { rooms: Room[] }) => {
                 align="left"
                 style={{
                   fontFamily: "Prompt",
-                  width: "140px",
+                  width: "300px",
                   color: "#65758b",
                   fontWeight: "bold",
                   fontSize: "17px",
