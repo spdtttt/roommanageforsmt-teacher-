@@ -59,10 +59,12 @@ const AssignedStudentsButton = ({ campId, campInfo }: { campId: number, campInfo
     let tableRows = "";
     rooms.forEach((room, index) => {
       const studentNames = room.students.map(s => s.name || "-").join("<br>");
+      const note = room.note || "-";
       tableRows += `
         <tr>
           <td>${index + 1}</td>
           <td style="text-align: left; padding-left: 15px;">${studentNames}</td>
+          <td style="text-align: left; padding-left: 15px;">${note}</td>
           <td></td>
         </tr>
       `;
@@ -143,7 +145,8 @@ const AssignedStudentsButton = ({ campId, campInfo }: { campId: number, campInfo
             <thead>
               <tr>
                 <th style="width: 60px;">ที่</th>
-                <th style="width: 250px;">สมาชิกในห้อง</th>
+                <th style="width: 200px;">สมาชิกในห้อง</th>
+                <th style="width: 200px;">หมายเหตุ</th>
                 <th style="width: 150px;">เลขห้อง</th>
               </tr>
             </thead>

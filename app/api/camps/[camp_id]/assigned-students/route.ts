@@ -47,23 +47,16 @@ export async function GET(
             },
         });
 
-        // Map assigned students by ID for quick lookup
         const studentMap = new Map<number, any>();
         assignedStudents.forEach((student) => {
             studentMap.set(student.id, student);
         });
 
-        // Construct the response: Rooms with their Students
         const roomsWithStudents = rooms.map((room) => {
             const studentsInRoom = room.member_ids
                 .map((studentId) => studentMap.get(studentId))
-                .filter((student) => student !== undefined) // Filter out any missing students
+                .filter((student) => student !== undefined)
                 .sort((a, b) => {
-                    // Sort by gender (Male first usually, or based on requirement) then student_id
-                    // Assuming 'นาย' or 'Male' like string comparison if gender is string
-                    // Let's just stick to student_id or name sort for consistency within room if not specified
-                    // Original code sorted by gender desc, student_id asc globally.
-                    // Let's sort within room by gender desc, student_id asc
                     if (a.gender !== b.gender) {
                         return (b.gender || "").localeCompare(a.gender || "");
                     }
@@ -77,16 +70,14 @@ export async function GET(
             };
         });
 
-        // Filter out rooms with no students if desired? 
-        // Logic says "Assigned Students", so maybe only rooms that actally have students?
-        // But the button is "Assigned Students", maybe it implies "List of Assignments".
-        // Let's return only rooms that have at least one student, or maybe all rooms?
-        // User request: "print รายการห้องพักของนักเรียน" -> Rooms of students.
-        // If a room is empty, it's not a "room of students".
-        // Let's keep all rooms for completeness, or just filter. 
-        // Given "AssignedStudentsButton", let's return only rooms with students.
-
         const meaningfulRooms = roomsWithStudents.filter(r => r.students.length > 0);
+
+        meaningfulRooms.sort((a, b) => {
+            const genderA = a.students[0]?.gender || "";
+            const genderB = b.students[0]?.gender || "";
+
+            return genderB.localeCompare(genderA);
+        });
 
         return NextResponse.json(meaningfulRooms);
     } catch (err) {
