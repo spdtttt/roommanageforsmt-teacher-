@@ -33,7 +33,13 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser()
+
+  // Auto-refresh session to prevent expiration
+  if (user) {
+    const { data, error: refreshError } = await supabase.auth.refreshSession()
+  }
 
   if (
     !user &&
