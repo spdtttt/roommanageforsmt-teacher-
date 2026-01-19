@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ระบบจัดการห้องเรียน S.M.T สำหรับครู
 
-## Getting Started
+ระบบจัดการค่าย กิจกรรม และนักเรียนสำหรับห้องเรียน S.M.T โรงเรียนเมืองสุราษฎร์ธานี
 
-First, run the development server:
+## ฟีเจอร์หลัก
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 📚 จัดการค่ายและกิจกรรม
+- สร้างและแก้ไขข้อมูลค่าย/กิจกรรม
+- กำหนดวันที่เริ่มต้นและสิ้นสุด
+- จัดการรูปแบบห้องพักที่นักเรียนต้องค้างคืน
+
+### 🏫 จัดการห้องพัก
+- จัดการรูปแบบจำนวนคนต่อห้องพัก
+- ลบห้องเรียนที่ไม่ต้องการ
+
+### 👨‍🎓 จัดการนักเรียน
+- เพิ่มนักเรียนทีละคนหรืออัปโหลดเป็นไฟล์ CSV
+- แก้ไขข้อมูลนักเรียน
+- ลบนักเรียนที่ไม่ต้องการ
+
+### 📊 สถิติและแดชบอร์ด
+- ดูจำนวนนักเรียนทั้งหมด
+- ดูจำนวนห้องเรียน
+- ดูจำนวนค่ายที่กำลังดำเนินการ
+- สามารถ Print PDF รายการห้องพักได้
+
+## วิธีการใช้งาน
+
+### 1. เข้าสู่ระบบ
+- เปิดเว็บไซต์ระบบจัดการห้องเรียน
+- กรอกอีเมลและรหัสผ่านที่ได้รับจากผู้ดูแลระบบ
+- คลิกปุ่ม "เข้าสู่ระบบ"
+
+### 2. จัดการค่ายและกิจกรรม
+- ไปที่หน้า "ค่ายและกิจกรรม"
+- คลิกปุ่ม "เพิ่มค่ายใหม่" เพื่อสร้างค่ายใหม่
+- กรอกข้อมูลค่าย:
+  - ชื่อค่าย
+  - ชั้นเรียน
+  - วันที่เริ่มต้นและสิ้นสุด
+  - รูปแบบของห้องพักที่ให้นักเรียนบันทึก
+- คลิก "บันทึก" เพื่อสร้างค่าย
+
+### 3. จัดการห้องพัก
+- เข้าไปในค่ายที่ต้องการจัดการ
+- ไปที่แท็บ "รายการห้องพัก"
+- ดูรายการห้องพักที่นักเรียนได้บันทึก ในแต่ละรายการค่าย
+
+### 4. จัดการนักเรียน
+- ไปที่หน้า "นักเรียน"
+- เพิ่มนักเรียน:
+  - **เพิ่มทีละคน**: คลิก "เพิ่มนักเรียน" และกรอกข้อมูล
+  - **อัปโหลดไฟล์ CSV**: คลิก "อัปโหลด CSV" และเลือกไฟล์
+
+### 5. ออกจากระบบ
+- คลิกที่เมนูด้านซ้ายมือ
+- เลือก "ออกจากระบบ"
+
+## รูปแบบไฟล์ CSV สำหรับอัปโหลดนักเรียน
+
+ไฟล์ CSV ต้องมีคอลัมน์ดังนี้:
+```
+student_id   national_id        name               gender      class
+27898        1000000000001      ศุภพล แดงประทีป       male        609
+27899        1000000000002      จิรัฐิติกาล ใหม่ซ้อน      female      509
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**หมายเหตุ**: ชื่อไฟล์ต้องเป็นภาษาอังกฤษและไม่มีช่องว่างพิเศษ
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## เทคนิคการใช้งาน
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### การลบข้อมูล
+- **ลบค่าย**: คลิกที่ค่ายที่ต้องการลบ แล้วเลือก "ลบค่าย"
+- **ลบห้อง**: เข้าไปในค่าย เลือกห้อง แล้วคลิก "ลบห้อง"
+- **ลบนักเรียน**: ไปที่หน้า "นักเรียน" เลือกนักเรียนที่ต้องการลบ
 
-## Learn More
+## การแก้ไขปัญหา
 
-To learn more about Next.js, take a look at the following resources:
+### ไม่สามารถเข้าสู่ระบบได้
+- ตรวจสอบอีเมลและรหัสผ่านให้ถูกต้อง
+- ติดต่อผู้ดูแลระบบเพื่อขอรหัสผ่านใหม่
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### ไม่เห็นข้อมูลที่อัปเดตล่าสุด
+- รีเฟรชหน้าเว็บ (กด F5)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ไฟล์ CSV อัปโหลดไม่ได้
+- ตรวจสอบรูปแบบไฟล์ให้ถูกต้อง
+- ตรวจสอบ Encoding เป็น UTF-8
+- ชื่อไฟล์ต้องเป็นภาษาอังกฤษ
 
-## Deploy on Vercel
+## ติดต่อผู้ดูแลระบบ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+หากพบปัญหาหรือต้องการความช่วยเหลือเพิ่มเติม กรุณาติดต่อ:
+- ผู้ดูแลระบบ: นายศุภพล แดงประทีป
+- อีเมล: spdt101mos@gmail.com
+- โทรศัพท์: 0964491903
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+**พัฒนาโดย**: นายศุภพล แดงประทีป ม.6/9 ปีการศึกษา 2568
+**โรงเรียน**: โรงเรียนเมืองสุราษฎร์ธานี
