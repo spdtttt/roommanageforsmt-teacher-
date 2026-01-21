@@ -51,6 +51,9 @@ const UpdatePasswordForm = () => {
                 return;
             }
 
+            // Sign out after password update so user needs to login with new password
+            await supabase.auth.signOut();
+
             setSuccess(true);
             setLoading(false);
         } catch (err) {
