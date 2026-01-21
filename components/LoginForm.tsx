@@ -1,102 +1,142 @@
-'use client'
-import Logo from '@/public/smt_logo.jpg'
-import Image from 'next/image'
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+"use client";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { User, LockKeyhole, LogIn } from "lucide-react";
+import { EyeOff, Eye } from "lucide-react";
+import { BeatLoader } from "react-spinners";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const supabase = createClient()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { data, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
       if (signInError) {
-        setError(signInError.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
-        setLoading(false)
-        return
+        setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+        setLoading(false);
+        return;
       }
 
       if (data.user) {
-        router.push('/')
-        router.refresh()
+        router.push("/");
+        router.refresh();
       }
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
-      setLoading(false)
+      setError("เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+      setLoading(false);
     }
+  };
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-self-center">
+        <BeatLoader color="#0a0a4f" />
+      </div>
+    );
   }
 
   return (
     <>
-      <div className="w-full max-w-md font-[Prompt]">
-        <div className="text-center mb-8">
-          <Image src={Logo} alt='SMT Logo' className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-[0_0_30px_rgba(30,64,175,0.4)] mb-4"></Image>
-          <h1 className="text-2xl font-bold text-blue-900">S.M.T Camp</h1>
-          <p className="text-blue-600 mt-1">ระบบจัดการกิจกรรมห้องเรียน S.M.T</p>
+      {error && (
+        <div className="px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
         </div>
-        <div className="bg-white rounded-2xl p-8 border border-blue-200 shadow-xl">
-          <h2 className="text-xl font-semibold text-blue-900 text-center mb-6">เข้าสู่ระบบ</h2>
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-              {error}
-            </div>
-          )}
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-blue-900">Email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="กรอก Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete='off'
-                disabled={loading}
-                className='flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-blue-50 border-blue-200 text-blue-900 placeholder:text-blue-400 focus:border-blue-500 focus:ring-blue-500'
-              />
-            </div>
+      )}
+      <form onSubmit={onSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <label
+            htmlFor="studentId"
+            className="font-medium text-md text-gray-700"
+          >
+            อีเมล
+          </label>
+          <div className="relative text-gray-700">
+            <User className="text-gray-700 absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
+            <input
+              autoComplete="off"
+              type="text"
+              id="email"
+              placeholder="อีเมล"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="pl-12 py-3 w-full border-gray-300 border-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-blue-900">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="กรอก Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                className='flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-blue-50 border-blue-200 text-blue-900 placeholder:text-blue-400 focus:border-blue-500 focus:ring-blue-500 pr-10'
-              />
-            </div>
-
+        <div className="space-y-2">
+          <label
+            htmlFor="nationalId"
+            className="font-medium text-md text-gray-700"
+          >
+            รหัสผ่าน
+          </label>
+          <div className="relative text-gray-700">
+            <LockKeyhole className="text-gray-700 absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
+            <input
+              autoComplete="off"
+              type={isVisible ? "text" : "password"}
+              id="password"
+              placeholder="รหัสผ่าน"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-12 pr-12 py-3 w-full border-gray-300 border-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+            />
             <button
-              type="submit"
-              disabled={loading}
-              className='cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white font-medium py-2.5 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] disabled:hover:scale-100'
+              type="button"
+              onClick={() => setIsVisible((v) => !v)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
+              aria-label={isVisible ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
             >
-              {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
+              {isVisible ? (
+                <Eye className="w-5 h-5" />
+              ) : (
+                <EyeOff className="w-5 h-5" />
+              )}
             </button>
-          </form>
+          </div>
+          <Link href="/reset-password" className="flex justify-end text-blue-800 hover:underline text-md">
+            ลืมรหัสผ่าน
+          </Link>
         </div>
-        <p className='text-center text-blue-600/70 text-sm mt-6'>© 2025 Muang Suratthani School (S.M.T)</p>
-      </div>
+
+        <button
+          type="submit"
+          className="group w-full bg-blue-900 cursor-pointer justify-center items-center flex py-3 rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"
+          disabled={loading}
+        >
+          {/* ถ้ากำลังเข้าสู่ระบบ */}
+          {loading ? (
+            <span className="flex items-center text-white text-xl">
+              กำลังเข้าสู่ระบบ...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2 text-white text-xl">
+              <LogIn className="group-hover:-translate-x-2 duration-300 w-5 h-5" />
+              เข้าสู่ระบบ
+            </span>
+          )}
+        </button>
+      </form>
     </>
-  )
-}
-export default LoginForm
+  );
+};
+export default LoginForm;

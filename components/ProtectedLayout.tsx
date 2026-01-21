@@ -16,7 +16,7 @@ export default function ProtectedLayout({
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === "/login";
+  const isLoginPage = pathname === "/login" || pathname === "/reset-password" || pathname === "/update-password";
 
   useEffect(() => {
     if (!loading) {
