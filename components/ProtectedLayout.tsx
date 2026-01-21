@@ -16,17 +16,20 @@ export default function ProtectedLayout({
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === "/login" || pathname === "/reset-password" || pathname === "/update-password";
+  const isAuthPage = pathname === "/login" || pathname === "/reset-password";
+  const isUpdatePasswordPage = pathname === "/update-password";
+  const isPublicPage = isAuthPage || isUpdatePasswordPage;
 
   useEffect(() => {
     if (!loading) {
-      if (!user && !isLoginPage) {
+      if (!user && !isPublicPage) {
         router.push("/login");
-      } else if (user && isLoginPage) {
+      } else if (user && isAuthPage) {
+        // Only redirect if on login/reset-password, NOT update-password
         router.push("/");
       }
     }
-  }, [user, loading, isLoginPage, router]);
+  }, [user, loading, isPublicPage, isAuthPage, router]);
 
   // Show loading state
   if (loading) {
@@ -38,7 +41,7 @@ export default function ProtectedLayout({
   }
 
   // If on login page, don't show sidebar and use full screen layout
-  if (isLoginPage) {
+  if (isPublicPage) {
     return <div className="w-full h-screen">{children}</div>;
   }
 

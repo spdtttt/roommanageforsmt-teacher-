@@ -28,7 +28,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Don't update user state during password recovery to prevent redirect
+      if (event === 'PASSWORD_RECOVERY') {
+        setUser(session?.user ?? null)
+        setLoading(false)
+        return
+      }
       setUser(session?.user ?? null)
       setLoading(false)
     })
